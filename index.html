@@ -153,14 +153,6 @@ body::after{
   color: var(--sapp);
   margin-right: 6px;
 }
-.equipment-badge {
-  display: inline-block;
-  background: rgba(200,136,58,0.15);
-  border-radius: 12px;
-  padding: 2px 8px;
-  font-size: 9px;
-  color: var(--gold2);
-}
 .job-date {
   font-size: 11px;
   color: var(--gold2);
@@ -187,28 +179,6 @@ body::after{
   background: rgba(74,158,223,0.15);
   border-color: rgba(74,158,223,0.4);
   color: var(--sapp);
-}
-.quick-add {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 12px;
-}
-.quick-add input {
-  flex: 1;
-  background: var(--s2);
-  border: 1px solid var(--border);
-  border-radius: 30px;
-  padding: 12px 16px;
-  color: var(--text);
-}
-.quick-add button {
-  padding: 0 18px;
-  background: var(--s2);
-  border: 1px solid var(--border2);
-  border-radius: 30px;
-  color: var(--text2);
-  font-weight: 600;
-  cursor: pointer;
 }
 
 /* Auth overlay */
@@ -376,20 +346,6 @@ body::after{
   <div class="filter-row"><button class="filter-btn active" data-status="all" onclick="filterJobs('all')">All</button><button class="filter-btn" data-status="upcoming" onclick="filterJobs('upcoming')">Upcoming</button><button class="filter-btn" data-status="completed" onclick="filterJobs('completed')">Completed</button></div>
   <div id="jobs-list"></div></div>
 
-  <!-- Equipment Pane -->
-  <div id="pane-products" class="pane">
-    <div class="phdr"><div><div class="plbl">Survey Equipment</div><div class="ptotal" style="font-size:18px;">Inventory</div></div><button class="addbtn" onclick="openModal('equipment')">＋ Add Gear</button></div>
-    <div class="filter-row" id="equipment-category-filters">
-      <button class="filter-btn active" data-cat="all" onclick="filterEquipmentCategory('all')">All</button>
-      <button class="filter-btn" data-cat="Total Station" onclick="filterEquipmentCategory('Total Station')">Total Station</button>
-      <button class="filter-btn" data-cat="GPS/GNSS" onclick="filterEquipmentCategory('GPS/GNSS')">GPS/GNSS</button>
-      <button class="filter-btn" data-cat="Drone" onclick="filterEquipmentCategory('Drone')">Drone</button>
-      <button class="filter-btn" data-cat="Accessories" onclick="filterEquipmentCategory('Accessories')">Accessories</button>
-    </div>
-    <div class="quick-add"><input type="text" id="quick-equipment-name" placeholder="Quick add gear…"><button onclick="quickAddEquipment()">Add</button></div>
-    <div id="equipment-list"></div>
-  </div>
-
   <!-- Analytics Pane -->
   <div id="pane-analytics" class="pane"><div class="phdr"><div><div class="plbl">Firm Insights</div><div class="ptotal" style="font-size:20px;">Analytics</div></div></div><div class="time-filter"><button class="tf-btn on" id="tf-today" onclick="setTimeFilter('today')">Today</button><button class="tf-btn" id="tf-weekly" onclick="setTimeFilter('weekly')">Weekly</button><button class="tf-btn" id="tf-monthly" onclick="setTimeFilter('monthly')">Monthly</button></div>
   <div class="card"><div class="sec-lbl">Profit & Loss</div><div class="pl-grid" id="pl-cards"></div></div>
@@ -409,7 +365,6 @@ body::after{
   <button class="nitem on" id="ni-dashboard" onclick="switchTab('dashboard')"><div class="nico">⚡</div>Home</button>
   <button class="nitem" id="ni-sales" onclick="switchTab('sales')"><div class="nico">📐</div>Jobs</button>
   <button class="nitem" id="ni-analytics" onclick="switchTab('analytics')"><div class="nico">📊</div>Insights</button>
-  <button class="nitem" id="ni-products" onclick="switchTab('products')"><div class="nico">🔭</div>Gear</button>
   <button class="nitem" id="ni-customers" onclick="switchTab('customers')"><div class="nico">👥</div>Clients</button>
   <button class="nitem" id="ni-expenses" onclick="switchTab('expenses')"><div class="nico">💸</div>Costs</button>
 </nav>
@@ -426,17 +381,6 @@ body::after{
 <div class="fld"><label>Fee (KES)</label><input type="number" id="job-fee"></div>
 <div class="fld"><label>Payment Method</label><div class="ptog"><button class="popt sc" id="pc" onclick="sp('cash')">💵 Cash</button><button class="popt" id="pm" onclick="sp('mpesa')">📱 M-Pesa</button></div></div>
 <button class="sbtn am" onclick="recordJob()">Save Job →</button></div></div>
-
-<!-- Equipment Modal -->
-<div class="moverlay" id="mo-equipment"><div class="msheet"><div class="mhandle"></div><div class="mhdr"><div class="mtitle">Add Equipment</div><button class="mclose" onclick="cm('equipment')">✕</button></div>
-<div class="fld"><label>Name</label><input type="text" id="eq-name" placeholder="e.g. Total Station"></div>
-<div class="fld"><label>Category</label><select id="eq-cat"><option value="Total Station">Total Station</option><option value="GPS/GNSS">GPS/GNSS</option><option value="Drone">Drone</option><option value="Accessories">Accessories</option><option value="Other">Other</option></select></div>
-<div class="fld"><label>Brand</label><input type="text" id="eq-brand" placeholder="e.g. Leica"></div>
-<div class="fld"><label>Model</label><input type="text" id="eq-model" placeholder="e.g. TS16"></div>
-<div class="fld"><label>Condition</label><select id="eq-cond"><option value="Excellent">Excellent</option><option value="Good">Good</option><option value="Fair">Fair</option></select></div>
-<div class="fld"><label>Quantity</label><input type="number" id="eq-qty" value="1"></div>
-<div class="fld"><label>Value (KES)</label><input type="number" id="eq-value"></div>
-<button class="sbtn gn" onclick="addEquipment()">Add to Inventory →</button></div></div>
 
 <!-- Expense Modal -->
 <div class="moverlay" id="mo-expense"><div class="msheet"><div class="mhandle"></div><div class="mhdr"><div class="mtitle">Add Expense</div><button class="mclose" onclick="cm('expense')">✕</button></div><div class="fld"><label>Title</label><input type="text" id="et"></div><div class="fld"><label>Amount (KES)</label><input type="number" id="ea"></div><button class="sbtn rd" onclick="addExpense()">Record Expense →</button></div></div>
@@ -468,7 +412,7 @@ function clearSession(){localStorage.removeItem(SESSION_KEY);currentUser=null;}
 function updateShopNameDisplay(){const d=document.getElementById('shop-name-display');if(d&&currentUser)d.textContent=currentUser.shopName||'Survey Duka';}
 const BASE_DB_NAME='survey_duka';let DB_VERSION=3;
 function getUserDBName(uid){return BASE_DB_NAME+'_'+uid;}
-async function openUserDB(uid){return new Promise((res,rej)=>{const r=indexedDB.open(getUserDBName(uid),DB_VERSION);r.onerror=()=>rej(r.error);r.onsuccess=()=>{db=r.result;res(db);};r.onupgradeneeded=(ev)=>{const db=ev.target.result;if(!db.objectStoreNames.contains('equipment'))db.createObjectStore('equipment',{keyPath:'id',autoIncrement:true});if(!db.objectStoreNames.contains('jobs'))db.createObjectStore('jobs',{keyPath:'id',autoIncrement:true});if(!db.objectStoreNames.contains('expenses'))db.createObjectStore('expenses',{keyPath:'id',autoIncrement:true});if(!db.objectStoreNames.contains('customers'))db.createObjectStore('customers',{keyPath:'id',autoIncrement:true});};});}
+async function openUserDB(uid){return new Promise((res,rej)=>{const r=indexedDB.open(getUserDBName(uid),DB_VERSION);r.onerror=()=>rej(r.error);r.onsuccess=()=>{db=r.result;res(db);};r.onupgradeneeded=(ev)=>{const db=ev.target.result;if(!db.objectStoreNames.contains('jobs'))db.createObjectStore('jobs',{keyPath:'id',autoIncrement:true});if(!db.objectStoreNames.contains('expenses'))db.createObjectStore('expenses',{keyPath:'id',autoIncrement:true});if(!db.objectStoreNames.contains('customers'))db.createObjectStore('customers',{keyPath:'id',autoIncrement:true});};});}
 
 let authMode='login';
 function authSetTab(m){authMode=m;document.getElementById('tab-login').classList.toggle('active',m==='login');document.getElementById('tab-signup').classList.toggle('active',m==='signup');document.getElementById('login-fields').style.display=m==='login'?'block':'none';document.getElementById('signup-fields').style.display=m==='signup'?'block':'none';document.getElementById('auth-submit-btn').textContent=m==='login'?'Sign In':'Create Account';document.getElementById('auth-switch-msg').innerHTML=m==='login'?`Don't have an account? <span class="auth-switch-link" onclick="authSetTab('signup')">Sign up</span>`:`Already have an account? <span class="auth-switch-link" onclick="authSetTab('login')">Sign in</span>`;}
@@ -479,11 +423,6 @@ function authLogout(){if(confirm('Sign out?')){clearSession();db=null;document.g
 
 // --- Sample data ---
 async function initSampleData(){
-  const equipment=await getAll('equipment');
-  if(equipment.length===0){
-    await addItem('equipment',{name:'Total Station',category:'Total Station',brand:'Leica',model:'TS16',condition:'Excellent',quantity:1,value:850000});
-    await addItem('equipment',{name:'GPS Rover',category:'GPS/GNSS',brand:'Trimble',model:'R12i',condition:'Good',quantity:2,value:1200000});
-  }
   const customers=await getAll('customers');
   if(customers.length===0){
     await addItem('customers',{name:'Acme Developers',phone:'0712 345 678',email:'projects@acme.co.ke'});
@@ -496,12 +435,12 @@ async function initSampleData(){
 }
 
 // --- Data ops ---
-let equipment=[], jobs=[], expenses=[], customers=[], payM='cash', curTab='dashboard', analyticsFilter='today', equipmentCategoryFilter='all', jobFilter='all', custSearch='';
+let jobs=[], expenses=[], customers=[], payM='cash', curTab='dashboard', analyticsFilter='today', jobFilter='all', custSearch='';
 async function getAll(s){return new Promise((res,rej)=>{const r=db.transaction(s,'readonly').objectStore(s).getAll();r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error);});}
 async function addItem(s,i){return new Promise((res,rej)=>{const r=db.transaction(s,'readwrite').objectStore(s).add(i);r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error);});}
 async function updateItem(s,i){return new Promise((res,rej)=>{const r=db.transaction(s,'readwrite').objectStore(s).put(i);r.onsuccess=()=>res();r.onerror=()=>rej(r.error);});}
 async function deleteItem(s,id){return new Promise((res,rej)=>{const r=db.transaction(s,'readwrite').objectStore(s).delete(id);r.onsuccess=()=>res();r.onerror=()=>rej(r.error);});}
-async function loadData(){equipment=await getAll('equipment');jobs=await getAll('jobs');expenses=await getAll('expenses');customers=await getAll('customers');}
+async function loadData(){jobs=await getAll('jobs');expenses=await getAll('expenses');customers=await getAll('customers');}
 async function refreshData(){await loadData();renderAll();}
 const fmt=n=>'KES '+Number(n||0).toLocaleString('en-KE',{maximumFractionDigits:0});
 const fmtShort=n=>{let v=Math.abs(n||0);return v>=1000?(n<0?'-':'')+(v/1000).toFixed(1)+'K':String(Math.round(n||0));};
@@ -551,13 +490,6 @@ function renderJobs(){
 async function deleteJob(id){if(confirm('Delete job?')){await deleteItem('jobs',id);await refreshData();}}
 function filterJobs(f){jobFilter=f;document.querySelectorAll('#pane-sales .filter-btn').forEach(b=>b.classList.toggle('active',b.dataset.status===f));renderJobs();}
 
-function filterEquipmentCategory(cat){equipmentCategoryFilter=cat;document.querySelectorAll('#equipment-category-filters .filter-btn').forEach(b=>b.classList.toggle('active',b.dataset.cat===cat));renderEquipment();}
-function renderEquipment(){
-  const filtered=equipment.filter(e=>equipmentCategoryFilter==='all'?true:e.category===equipmentCategoryFilter);
-  document.getElementById('equipment-list').innerHTML=filtered.map(e=>`<div class="litem"><div class="litem-row"><div class="litem-content"><div class="iname">${e.name}</div><div class="imeta"><span class="equipment-badge">${e.category||'Gear'}</span>${e.brand?`<span class="mp">🏷️ ${e.brand} ${e.model||''}</span>`:''}<span class="mp">✨ ${e.condition||'Good'}</span></div><div class="imeta"><span class="mp">Qty: ${e.quantity}</span><span class="mp">Value: ${fmt(e.value)}</span></div></div><div class="litem-actions"><button class="delete-btn" onclick="deleteEquipment(${e.id})">🗑️</button></div></div></div>`).join('');
-}
-async function deleteEquipment(id){if(confirm('Remove equipment?')){await deleteItem('equipment',id);await refreshData();}}
-
 function renderExpenses(){
   document.getElementById('p-exp').textContent=fmt(expenses.reduce((s,x)=>s+x.amount,0));
   document.getElementById('exp-list').innerHTML=expenses.slice().reverse().map(e=>`<div class="litem"><div class="litem-row"><div class="litem-content"><div class="ename">${e.title}</div><div class="edate">${new Date(e.date).toLocaleDateString()}</div></div><div class="litem-actions"><div class="eamt">${fmt(e.amount)}</div><button class="delete-btn" onclick="deleteExpense(${e.id})">🗑️</button></div></div></div>`).join('');
@@ -599,31 +531,18 @@ async function recordJob(){
   await refreshData();cm('job');
 }
 
-async function addEquipment(){
-  const name=document.getElementById('eq-name').value.trim();if(!name)return;
-  const category=document.getElementById('eq-cat').value;
-  const brand=document.getElementById('eq-brand').value.trim();
-  const model=document.getElementById('eq-model').value.trim();
-  const condition=document.getElementById('eq-cond').value;
-  const quantity=parseInt(document.getElementById('eq-qty').value)||1;
-  const value=parseFloat(document.getElementById('eq-value').value)||0;
-  await addItem('equipment',{name,category,brand,model,condition,quantity,value});
-  await refreshData();cm('equipment');
-}
-
 async function addExpense(){const t=document.getElementById('et').value.trim();const a=parseFloat(document.getElementById('ea').value);if(!t||!a)return;await addItem('expenses',{title:t,amount:a,date:new Date().toISOString()});await refreshData();cm('expense');}
 async function addCustomer(){const n=document.getElementById('cn-name').value.trim();if(!n)return;await addItem('customers',{name:n,phone:document.getElementById('cn-phone').value.trim(),email:document.getElementById('cn-email').value.trim()});await refreshData();cm('addCustomer');}
 function filterCustomers(){custSearch=document.getElementById('cust-search-input').value.toLowerCase().trim();renderCustomers();}
 
-function switchTab(t){curTab=t;document.querySelectorAll('.pane').forEach(p=>p.classList.remove('on'));document.getElementById(`pane-${t}`).classList.add('on');document.querySelectorAll('.nitem').forEach(n=>n.classList.remove('on'));document.getElementById(`ni-${t}`).classList.add('on');document.getElementById('fab').style.display=['dashboard','analytics'].includes(t)?'none':'flex';if(t==='analytics')renderAnalytics();if(t==='sales')renderJobs();if(t==='products')renderEquipment();if(t==='customers')renderCustomers();}
-function fabClick(){if(curTab==='sales')openModal('job');else if(curTab==='products')openModal('equipment');else if(curTab==='expenses')openModal('expense');else if(curTab==='customers')openModal('addCustomer');}
+function switchTab(t){curTab=t;document.querySelectorAll('.pane').forEach(p=>p.classList.remove('on'));document.getElementById(`pane-${t}`).classList.add('on');document.querySelectorAll('.nitem').forEach(n=>n.classList.remove('on'));document.getElementById(`ni-${t}`).classList.add('on');document.getElementById('fab').style.display=['dashboard','analytics'].includes(t)?'none':'flex';if(t==='analytics')renderAnalytics();if(t==='sales')renderJobs();if(t==='customers')renderCustomers();}
+function fabClick(){if(curTab==='sales')openModal('job');else if(curTab==='expenses')openModal('expense');else if(curTab==='customers')openModal('addCustomer');}
 function openModal(t){
   if(t==='job'){const dt=document.getElementById('job-date');if(dt){const now=new Date();now.setMinutes(now.getMinutes()-now.getTimezoneOffset());dt.value=now.toISOString().split('T')[0];}}
   document.getElementById(`mo-${t}`).classList.add('on');
 }
 function cm(t){document.getElementById(`mo-${t}`).classList.remove('on');}
 function sp(m){payM=m;document.getElementById('pc').className='popt'+(m==='cash'?' sc':'');document.getElementById('pm').className='popt'+(m==='mpesa'?' sm':'');}
-function quickAddEquipment(){const n=document.getElementById('quick-equipment-name').value.trim();if(n){document.getElementById('eq-name').value=n;openModal('equipment');document.getElementById('quick-equipment-name').value='';}}
 
 function openReport(){
   const{total,exp,mpesa,cash}=calc();const rev=jobs.filter(j=>j.date===new Date().toISOString().split('T')[0]).reduce((s,j)=>s+(j.fee||0),0);
@@ -636,7 +555,7 @@ function copyRpt(){navigator.clipboard.writeText(document.getElementById('rta').
 function exportExpensesCSV(){const rows=[['Date','Title','Amount']];expenses.forEach(e=>rows.push([new Date(e.date).toLocaleDateString(),e.title,e.amount]));downloadCSV(rows,'expenses.csv');}
 function downloadCSV(rows,file){const csv=rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');const blob=new Blob([csv],{type:'text/csv'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=file;a.click();URL.revokeObjectURL(a.href);}
 
-function renderAll(){renderDashboard();renderJobs();renderEquipment();renderAnalytics();renderCustomers();renderExpenses();}
+function renderAll(){renderDashboard();renderJobs();renderAnalytics();renderCustomers();renderExpenses();}
 
 // Boot
 (async function init(){
@@ -644,7 +563,6 @@ function renderAll(){renderDashboard();renderJobs();renderEquipment();renderAnal
   if(session){await openUserDB(session.userId);await loadData();showApp();}
   else{document.getElementById('auth-overlay').style.display='flex';authSetTab('login');}
   document.querySelectorAll('.moverlay').forEach(el=>el.addEventListener('click',e=>{if(e.target===el)el.classList.remove('on');}));
-  document.getElementById('quick-equipment-name')?.addEventListener('keypress',e=>{if(e.key==='Enter')quickAddEquipment();});
 })();
 </script>
 </body>
