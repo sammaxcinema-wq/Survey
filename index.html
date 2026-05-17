@@ -1,569 +1,1063 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Survey Duka · Land Survey Pro PWA</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<style>
-:root {
-  --bg:      #050807;
-  --s1:      #0C1310;
-  --s2:      #121A14;
-  --s3:      #182019;
-  --border:  rgba(255,255,255,0.055);
-  --border2: rgba(255,255,255,0.10);
-  --gold:    #C8883A;
-  --gold2:   #E9B96E;
-  --gold3:   rgba(200,136,58,0.12);
-  --em:      #0A9167;
-  --em2:     #34D399;
-  --rose:    #E54562;
-  --sapp:    #4A9EDF;
-  --text:    #EDF0EE;
-  --text2:   #C8D4CB;
-  --muted:   #526659;
-  --muted2:  #8CA396;
-  --serif:   'Cormorant Garamond', Georgia, serif;
-  --sans:    'Outfit', system-ui, sans-serif;
-  --r:       20px;
-  --r2:      14px;
-  --r3:      10px;
-}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{height:100%}
-body::before{
-  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
-  background:rgba(3,6,4,0.78);
-}
-body{
-  font-family:var(--sans);background:#050807;
-  color:var(--text);
-  max-width:100%;margin:0 auto;min-height:100vh;overflow-x:hidden;
-}
-#app{max-width:430px;margin:0 auto;}
-::-webkit-scrollbar{width:0}
-body::after{
-  content:'';position:fixed;inset:0;pointer-events:none;z-index:999;opacity:0.025;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
-}
-.orb{position:fixed;border-radius:50%;pointer-events:none;z-index:0;}
-.orb1{width:380px;height:380px;background:radial-gradient(circle,rgba(200,136,58,0.10) 0%,transparent 70%);top:-120px;right:-100px;filter:blur(40px);}
-.orb2{width:280px;height:280px;background:radial-gradient(circle,rgba(10,145,103,0.08) 0%,transparent 70%);bottom:80px;left:-80px;filter:blur(40px);}
-.orb3{width:200px;height:200px;background:radial-gradient(circle,rgba(200,136,58,0.05) 0%,transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);filter:blur(60px);}
-#app{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;}
-#hdr{padding:20px 22px 16px;background:linear-gradient(to bottom,rgba(5,8,7,0.98) 50%,transparent);position:sticky;top:0;z-index:20;backdrop-filter:blur(32px);}
-.hdr-row{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;}
-.brand-eye{font-size:9px;font-weight:600;letter-spacing:4px;color:var(--muted);text-transform:uppercase;margin-bottom:5px;}
-.brand-name{font-family:var(--serif);font-size:28px;line-height:1;font-weight:400;color:var(--text);letter-spacing:-0.3px;}
-.brand-name em{color:var(--gold);font-style:italic;font-weight:300;}
-.hdr-actions{display:flex;align-items:center;gap:8px;}
-.rpt-btn{display:flex;align-items:center;gap:7px;background:linear-gradient(135deg,var(--gold),#A86E28);color:#0A0600;border:none;border-radius:100px;padding:10px 18px;font-family:var(--sans);font-weight:700;font-size:12px;cursor:pointer;box-shadow:0 6px 24px rgba(200,136,58,0.30),inset 0 1px 0 rgba(255,255,255,0.15);transition:transform .15s;}
-.rpt-btn:active{transform:scale(.93);}
-.logout-btn{display:flex;align-items:center;justify-content:center;width:38px;height:38px;background:rgba(255,255,255,0.04);border:1px solid var(--border2);border-radius:50%;cursor:pointer;color:var(--muted2);font-size:15px;transition:all .18s;flex-shrink:0;}
-.logout-btn:active{transform:scale(.88);background:rgba(229,69,98,0.10);border-color:rgba(229,69,98,0.25);color:#FB8097;}
-#low{display:none;margin-top:12px;gap:8px;background:rgba(229,69,98,0.07);border:1px solid rgba(229,69,98,0.18);border-radius:var(--r3);padding:9px 14px;font-size:11.5px;color:#F9A8B8;}
-#content{flex:1;padding:4px 16px 108px;}
-.pane{display:none;flex-direction:column;gap:13px;padding-top:6px;}
-.pane.on{display:flex;animation:su .42s cubic-bezier(.22,1,.36,1);}
-@keyframes su{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
-.hero{background:linear-gradient(150deg,rgba(22,34,25,0.82) 0%,rgba(10,18,9,0.78) 50%,rgba(8,17,9,0.72) 100%);border:1px solid rgba(200,136,58,0.20);border-radius:26px;padding:26px 24px 24px;position:relative;}
-.hero-label{font-size:9.5px;font-weight:600;letter-spacing:4px;color:var(--muted2);text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:8px;}
-.hero-label::before{content:'';display:block;width:14px;height:1px;background:var(--gold);opacity:0.5;}
-.hero-num{font-family:var(--serif);font-size:58px;line-height:1;letter-spacing:-2px;color:var(--text);font-weight:400;display:flex;align-items:baseline;gap:8px;}
-.hero-cur{font-family:var(--sans);font-size:16px;color:var(--muted2);font-weight:300;padding-bottom:6px;}
-.hero-row{margin-top:18px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
-.pill{display:inline-flex;align-items:center;gap:5px;border-radius:100px;padding:5px 13px;font-size:12px;font-weight:600;}
-.pill.pos{background:rgba(10,145,103,.12);border:1px solid rgba(52,211,153,.18);color:var(--em2);}
-.pill.neg{background:rgba(229,69,98,.10);border:1px solid rgba(229,69,98,.2);color:#FB8097;}
-.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-.sc{background:rgba(12,19,16,0.75);border:1px solid var(--border);border-radius:var(--r);padding:17px 16px;}
-.sc-ico{width:36px;height:36px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:17px;margin-bottom:14px;background:rgba(200,136,58,0.10);}
-.sc-val{font-family:var(--serif);font-size:20px;margin-bottom:4px;font-weight:500;}
-.sc-lbl{font-size:10px;color:var(--muted);font-weight:600;letter-spacing:.6px;text-transform:uppercase;}
-.card{background:rgba(12,19,16,0.75);border:1px solid var(--border);border-radius:var(--r);padding:20px;position:relative;}
-.sec-lbl{font-size:9px;font-weight:700;letter-spacing:3.5px;color:var(--muted);text-transform:uppercase;margin-bottom:16px;display:flex;align-items:center;gap:8px;}
-.sec-lbl::after{content:'';flex:1;height:1px;background:var(--border);}
-.split-row{display:flex;align-items:center;gap:20px;}
-.leg{flex:1;display:flex;flex-direction:column;gap:13px;}
-.leg-item{display:flex;align-items:center;justify-content:space-between;}
-.leg-dot{width:7px;height:7px;border-radius:50%;}
-.leg-name{font-size:12px;color:var(--muted2);font-weight:500;}
-.leg-val{font-family:var(--serif);font-size:18px;font-weight:500;}
-.leg-pct{font-size:10px;color:var(--muted);font-weight:600;background:var(--s2);border-radius:100px;padding:2px 7px;}
-.bars{display:flex;align-items:flex-end;gap:7px;height:80px;margin-top:8px;}
-.bcol{display:flex;flex-direction:column;align-items:center;flex:1;height:100%;}
-.bbg{width:100%;flex:1;display:flex;align-items:flex-end;}
-.bfill{width:100%;border-radius:6px 6px 2px 2px;background:var(--s2);border:1px solid rgba(255,255,255,0.04);transition:height .7s;min-height:4px;}
-.bfill.today{background:linear-gradient(to bottom,var(--gold),rgba(200,136,58,0.45));}
-.bday{font-size:8.5px;color:var(--muted);margin-top:6px;font-weight:500;}
-.bday.today{color:var(--gold);font-weight:700;}
-.rec-card{background:rgba(12,19,16,0.75);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;}
-.rec-hdr{padding:18px 20px 0;}
-.srow{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;border-top:1px solid var(--border);gap:12px;}
-.sname{font-size:13.5px;font-weight:500;margin-bottom:5px;}
-.sbadge{display:inline-flex;align-items:center;gap:4px;border-radius:100px;padding:3px 10px;font-size:10px;font-weight:700;}
-.sbadge.mpesa{background:rgba(10,145,103,.10);border:1px solid rgba(10,145,103,.2);color:var(--em2);}
-.sbadge.cash{background:rgba(200,136,58,.10);border:1px solid rgba(200,136,58,.2);color:var(--gold2);}
-.samt{font-family:var(--serif);font-size:20px;font-weight:500;flex-shrink:0;}
-.phdr{display:flex;justify-content:space-between;align-items:center;padding:6px 0 2px;}
-.ptotal{font-family:var(--serif);font-size:34px;font-weight:400;letter-spacing:-0.5px;}
-.plbl{font-size:9px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-bottom:5px;font-weight:600;}
-.addbtn{display:flex;align-items:center;gap:6px;background:var(--s2);border:1px solid var(--border2);color:var(--text2);border-radius:100px;padding:10px 18px;font-size:12.5px;font-weight:600;cursor:pointer;}
-.addbtn:active{transform:scale(.94);}
-.litem{background:rgba(12,19,16,0.75);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;margin-bottom:9px;}
-.iname{font-size:14px;font-weight:600;margin-bottom:7px;}
-.imeta{display:flex;gap:10px;flex-wrap:wrap;}
-.mp{font-size:11px;color:var(--muted);background:var(--s2);border-radius:6px;padding:3px 8px;}
-.mp b{color:var(--text2);font-weight:600;}
-.delete-btn{background:rgba(229,69,98,0.1);border:1px solid rgba(229,69,98,0.2);color:#FB8097;border-radius:8px;padding:6px 12px;font-size:11px;font-weight:600;cursor:pointer;}
-#nav{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:30;background:rgba(8,12,10,0.85);backdrop-filter:blur(32px);border:1px solid rgba(255,255,255,0.08);border-radius:26px;padding:8px;display:flex;gap:2px;width:calc(100% - 32px);max-width:398px;}
-.nitem{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 2px 6px;background:none;border:none;color:var(--muted);font-size:8.5px;font-weight:600;text-transform:uppercase;cursor:pointer;border-radius:16px;}
-.nitem.on{color:var(--gold);background:rgba(200,136,58,0.09);}
-.nico{width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:16px;}
-#fab{position:fixed;bottom:88px;right:calc(50% - 215px + 18px);z-index:25;width:50px;height:50px;border-radius:16px;background:linear-gradient(135deg,var(--gold),#A86E28);border:none;color:#0A0600;font-size:26px;cursor:pointer;display:none;align-items:center;justify-content:center;box-shadow:0 8px 28px rgba(200,136,58,0.38);}
-.moverlay{position:fixed;inset:0;z-index:50;background:transparent;display:none;align-items:flex-end;justify-content:center;}
-.moverlay.on{display:flex;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);}
-.msheet{background:rgba(10,15,11,0.92);width:100%;max-width:430px;border-radius:28px 28px 0 0;border-top:1px solid rgba(255,255,255,0.08);padding:0 22px 48px;max-height:92vh;overflow-y:auto;}
-.mhandle{width:36px;height:3px;background:rgba(255,255,255,0.12);border-radius:2px;margin:14px auto 24px;}
-.mhdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;}
-.mtitle{font-family:var(--serif);font-size:26px;font-weight:400;}
-.mclose{width:34px;height:34px;border-radius:50%;background:var(--s2);border:1px solid var(--border);color:var(--muted2);display:flex;align-items:center;justify-content:center;cursor:pointer;}
-.fld{margin-bottom:17px;}
-.fld label{display:block;font-size:9.5px;font-weight:700;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:9px;}
-.fld input,.fld select{width:100%;background:var(--s2);border:1px solid var(--border);border-radius:var(--r2);padding:15px 17px;color:var(--text);font-size:15px;outline:none;}
-.ptog{display:flex;gap:10px;}
-.popt{flex:1;padding:14px;border-radius:var(--r2);border:1.5px solid var(--border);background:var(--s2);color:var(--muted2);font-size:13.5px;font-weight:600;cursor:pointer;text-align:center;}
-.popt.sc{border-color:rgba(200,136,58,0.45);background:rgba(200,136,58,0.07);color:var(--gold2);}
-.sbtn{width:100%;padding:16px;border-radius:var(--r2);border:none;font-size:15px;font-weight:700;cursor:pointer;margin-top:8px;}
-.sbtn.am{background:linear-gradient(135deg,var(--gold),#A86E28);color:#0A0600;}
-.sbtn.gn{background:linear-gradient(135deg,var(--em),#076B4E);color:#fff;}
-.sbtn.rd{background:linear-gradient(135deg,var(--rose),#B8293B);color:#fff;}
-.sbtn.bl{background:linear-gradient(135deg,var(--sapp),#2a6fa8);color:#fff;}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luminar Studio — AI Creative Ecosystem</title>
+    <script src="https://cdn.tailwindcss.com">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js">
+    </script>
+    <style>
+        :root {
+            --bg-deep: #06080f;
+            --bg-navy: #0a0f1a;
+            --glass-bg: rgba(10, 15, 28, 0.55);
+            --glass-border: rgba(255, 255, 255, 0.06);
+            --glow-violet: rgba(139, 92, 246, 0.45);
+            --glow-blue: rgba(59, 130, 246, 0.4);
+            --glow-cyan: rgba(6, 182, 212, 0.35);
+            --text-primary: #e8ecf2;
+            --text-secondary: #a0aab8;
+            --radius-xl: 28px;
+            --radius-lg: 20px;
+            --radius-md: 14px;
+        }
 
-/* Survey specific */
-.survey-type-badge {
-  display: inline-block;
-  background: rgba(74,158,223,0.15);
-  border-radius: 20px;
-  padding: 2px 10px;
-  font-size: 10px;
-  font-weight: 600;
-  color: var(--sapp);
-  margin-right: 6px;
-}
-.job-date {
-  font-size: 11px;
-  color: var(--gold2);
-  background: rgba(200,136,58,0.1);
-  padding: 4px 10px;
-  border-radius: 20px;
-}
-.filter-row {
-  display: flex;
-  gap: 6px;
-  margin-bottom: 12px;
-  flex-wrap: wrap;
-}
-.filter-btn {
-  padding: 6px 12px;
-  background: var(--s2);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  font-size: 11px;
-  color: var(--muted2);
-  cursor: pointer;
-}
-.filter-btn.active {
-  background: rgba(74,158,223,0.15);
-  border-color: rgba(74,158,223,0.4);
-  color: var(--sapp);
-}
+        * {
+            box-sizing: border-box;
+        }
 
-/* Auth overlay */
-#auth-overlay{
-  position:fixed;inset:0;z-index:200;
-  background:var(--bg);
-  display:flex;align-items:center;justify-content:center;
-  flex-direction:column;
-  transition:opacity .4s ease, transform .4s cubic-bezier(.22,1,.36,1);
-}
-#auth-overlay.auth-hide{
-  opacity:0;transform:scale(1.04);pointer-events:none;
-}
-.auth-screen{
-  width:100%;max-width:360px;padding:0 28px;
-  display:flex;flex-direction:column;align-items:center;
-  animation:su .5s cubic-bezier(.22,1,.36,1);
-}
-.auth-brand-eye{
-  font-size:8px;font-weight:700;letter-spacing:5px;
-  color:var(--muted);text-transform:uppercase;margin-bottom:8px;
-}
-.auth-brand-name{
-  font-family:var(--serif);font-size:36px;font-weight:400;
-  color:var(--text);letter-spacing:-0.5px;margin-bottom:6px;text-align:center;
-}
-.auth-brand-name em{color:var(--gold);font-style:italic;font-weight:300;}
-.auth-orb-ring{
-  width:80px;height:80px;border-radius:50%;
-  background:radial-gradient(circle at 38% 38%,rgba(200,136,58,0.22),rgba(10,145,103,0.08) 60%,transparent 80%);
-  border:1px solid rgba(200,136,58,0.18);
-  display:flex;align-items:center;justify-content:center;
-  font-size:34px;margin-bottom:28px;margin-top:4px;
-  box-shadow:0 0 40px rgba(200,136,58,0.10);
-}
-.auth-subtitle{
-  font-size:12px;color:var(--muted2);letter-spacing:.5px;
-  text-align:center;margin-bottom:32px;line-height:1.6;
-}
-.auth-tabs{
-  display:flex;gap:4px;background:var(--s2);border-radius:100px;
-  padding:4px;margin-bottom:24px;width:100%;
-}
-.auth-tab{
-  flex:1;padding:10px;border-radius:100px;
-  background:transparent;border:none;color:var(--muted);
-  font-size:13px;font-weight:600;cursor:pointer;
-  transition:all .15s;
-}
-.auth-tab.active{
-  background:rgba(200,136,58,0.12);color:var(--gold2);
-}
-.auth-input-group{
-  width:100%;margin-bottom:18px;
-}
-.auth-input-group label{
-  display:block;font-size:10px;font-weight:700;letter-spacing:1.5px;
-  color:var(--muted);text-transform:uppercase;margin-bottom:6px;
-}
-.auth-input-group input{
-  width:100%;background:var(--s2);border:1px solid var(--border);
-  border-radius:var(--r2);padding:16px 18px;color:var(--text);
-  font-size:15px;outline:none;
-}
-.auth-input-group input:focus{border-color:rgba(200,136,58,0.35);}
-.auth-error{
-  font-size:11.5px;color:#FB8097;font-weight:600;
-  text-align:center;min-height:20px;margin:8px 0;
-  opacity:0;transition:opacity .2s;
-}
-.auth-error.show{opacity:1;}
-.auth-submit-btn{
-  width:100%;padding:16px;border-radius:var(--r2);
-  background:linear-gradient(135deg,var(--gold),#A86E28);
-  color:#0A0600;border:none;font-size:15px;font-weight:700;
-  cursor:pointer;margin-top:12px;
-}
-.auth-switch-text{
-  font-size:11px;color:var(--muted);margin-top:20px;
-  text-align:center;
-}
-.auth-switch-link{
-  color:var(--gold);font-weight:600;cursor:pointer;
-  text-decoration:underline;text-underline-offset:3px;
-}
-.auth-switch-link:active{color:var(--gold2);}
-.auth-logout-link{
-  margin-top:16px;font-size:11px;color:var(--muted);
-  cursor:pointer;text-decoration:underline;
-}
-</style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: var(--bg-deep);
+            color: var(--text-primary);
+            font-family: 'Inter', 'SF Pro Display', system-ui, -apple-system, sans-serif;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            cursor: default;
+        }
+
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .grain-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+            opacity: 0.035;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+            background-size: 200px 200px;
+        }
+
+        .aurora-glow {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(140px);
+            opacity: 0.3;
+            pointer-events: none;
+            z-index: 0;
+            animation: auroraFloat 18s ease-in-out infinite;
+            will-change: transform;
+            contain: layout style paint;
+        }
+        .aurora-1 {
+            width: 700px;
+            height: 700px;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.5) 0%, transparent 70%);
+            top: -20%;
+            left: -10%;
+            animation-delay: 0s;
+        }
+        .aurora-2 {
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.4) 0%, transparent 70%);
+            bottom: -15%;
+            right: -8%;
+            animation-delay: -7s;
+        }
+        .aurora-3 {
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(6, 182, 212, 0.35) 0%, transparent 70%);
+            top: 50%;
+            left: 40%;
+            animation-delay: -12s;
+        }
+
+        @keyframes auroraFloat {
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1);
+            }
+            25% {
+                transform: translate(60px, -40px) scale(1.1);
+            }
+            50% {
+                transform: translate(-30px, 50px) scale(0.9);
+            }
+            75% {
+                transform: translate(-50px, -30px) scale(1.05);
+            }
+        }
+
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-xl);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1.2);
+            position: relative;
+            overflow: hidden;
+        }
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+        .glass-card:hover::before {
+            opacity: 1;
+        }
+        .glass-card:hover {
+            border-color: rgba(255, 255, 255, 0.14);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6), 0 0 60px var(--glow-violet), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+            transform: translateY(-4px);
+        }
+
+        .glow-ring {
+            position: relative;
+        }
+        .glow-ring::after {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: inherit;
+            padding: 2px;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.6), rgba(59, 130, 246, 0.5), rgba(6, 182, 212, 0.4));
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask-composite: exclude;
+            -webkit-mask-composite: xor;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+        .glow-ring:hover::after {
+            opacity: 1;
+        }
+
+        .btn-glow {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1.2);
+            box-shadow: 0 0 30px rgba(139, 92, 246, 0.3), 0 8px 24px rgba(0, 0, 0, 0.4);
+        }
+        .btn-glow:hover {
+            box-shadow: 0 0 60px rgba(139, 92, 246, 0.55), 0 12px 32px rgba(0, 0, 0, 0.5);
+            transform: translateY(-3px) scale(1.03);
+        }
+        .btn-glow:active {
+            transform: scale(0.96);
+            transition: all 0.1s;
+        }
+
+        .magnetic-wrapper {
+            display: inline-block;
+            transition: transform 0.15s ease-out;
+        }
+
+        @keyframes float {
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-16px);
+            }
+        }
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+        .animate-float-delayed {
+            animation: float 7s ease-in-out 2s infinite;
+        }
+
+        .skeleton {
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0.03) 25%, rgba(255, 255, 255, 0.06) 50%, rgba(255, 255, 255, 0.03) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 2s ease-in-out infinite;
+            border-radius: 8px;
+        }
+        @keyframes shimmer {
+            0% {
+                background-position: 200% 0;
+            }
+            100% {
+                background-position: -200% 0;
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        .cursor-glow {
+            position: fixed;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.12) 0%, transparent 70%);
+            transform: translate(-50%, -50%);
+            transition: opacity 0.3s;
+        }
+
+        .nav-blur {
+            background: rgba(8, 12, 22, 0.7);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .metric-value {
+            font-variant-numeric: tabular-nums;
+            letter-spacing: -0.02em;
+        }
+
+        .bento-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1.2);
+            overflow: hidden;
+        }
+        .bento-card:hover {
+            border-color: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(139, 92, 246, 0.2);
+            transform: translateY(-3px);
+        }
+
+        .reveal {
+            opacity: 0;
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #22c55e;
+            box-shadow: 0 0 12px #22c55e;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%,
+            100% {
+                box-shadow: 0 0 8px #22c55e;
+            }
+            50% {
+                box-shadow: 0 0 22px #22c55e, 0 0 40px rgba(34, 197, 94, 0.4);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .glass-card {
+                border-radius: var(--radius-md);
+            }
+            .aurora-glow {
+                filter: blur(80px);
+                opacity: 0.2;
+            }
+        }
+    </style>
 </head>
-<body>
-<div class="orb orb1"></div><div class="orb orb2"></div><div class="orb orb3"></div>
+<body class="bg-[#06080f] text-[#e8ecf2]">
 
-<!-- AUTH OVERLAY -->
-<div id="auth-overlay">
-  <div class="auth-screen" id="auth-login">
-    <div class="auth-brand-eye">Survey Duka</div>
-    <div class="auth-brand-name">Survey <em>Duka</em></div>
-    <div class="auth-orb-ring">🗺️</div>
-    <div class="auth-tabs">
-      <button class="auth-tab active" id="tab-login" onclick="authSetTab('login')">Sign In</button>
-      <button class="auth-tab" id="tab-signup" onclick="authSetTab('signup')">Sign Up</button>
+    <!-- Skip to content -->
+    <a href="#features" class="sr-only focus:not-sr-only focus:absolute focus:z-[100] focus:bg-violet-600 focus:text-white focus:p-3 focus:rounded">
+        Skip to content
+    </a>
+
+    <!-- Three.js Background -->
+    <canvas id="bg-canvas"></canvas>
+
+    <!-- Aurora Glows -->
+    <div class="aurora-glow aurora-1"></div>
+    <div class="aurora-glow aurora-2"></div>
+    <div class="aurora-glow aurora-3"></div>
+
+    <!-- Grain Overlay -->
+    <div class="grain-overlay"></div>
+
+    <!-- Cursor Glow Follower -->
+    <div class="cursor-glow" id="cursorGlow"></div>
+
+    <!-- Main Content Wrapper -->
+    <div class="relative z-10">
+
+        <!-- Navigation -->
+        <nav class="nav-blur fixed top-0 left-0 right-0 z-50 px-4 py-3 transition-all duration-300" id="navbar">
+            <div class="max-w-7xl mx-auto flex items-center justify-between">
+                <!-- Logo -->
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-blue-500 flex items-center justify-center shadow-lg shadow-violet-500/30">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round">
+                            <polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2"/>
+                            <line x1="12" y1="22" x2="12" y2="8.5"/>
+                            <polyline points="2 8.5 12 15 22 8.5"/>
+                        </svg>
+                    </div>
+                    <span class="text-lg font-bold tracking-tight text-white hidden sm:block">Luminar<span class="text-violet-400">Studio</span></span>
+                </div>
+
+                <!-- Desktop Nav Links -->
+                <div class="hidden md:flex items-center gap-1 bg-white/[0.03] rounded-full px-2 py-1.5 border border-white/[0.05]">
+                    <a href="#features" class="px-4 py-1.5 text-sm text-[#a0aab8] hover:text-white rounded-full transition-colors duration-200">Features</a>
+                    <a href="#tools" class="px-4 py-1.5 text-sm text-[#a0aab8] hover:text-white rounded-full transition-colors duration-200">Tools</a>
+                    <a href="#pricing" class="px-4 py-1.5 text-sm text-[#a0aab8] hover:text-white rounded-full transition-colors duration-200">Pricing</a>
+                    <a href="#dashboard" class="px-4 py-1.5 text-sm text-[#a0aab8] hover:text-white rounded-full transition-colors duration-200">Dashboard</a>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <button id="mobileMenuBtn" class="md:hidden text-white p-2" aria-label="Open menu" aria-expanded="false">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/>
+                    </svg>
+                </button>
+
+                <!-- CTA -->
+                <div class="hidden md:flex items-center gap-3">
+                    <button class="text-sm text-[#a0aab8] hover:text-white transition-colors">Sign In</button>
+                    <button class="btn-glow px-5 py-2.5 bg-gradient-to-r from-violet-600 to-blue-600 text-white text-sm font-semibold rounded-full">
+                        Start Creating
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mobile Menu -->
+            <div id="mobileMenu" class="md:hidden absolute top-full left-0 right-0 bg-[#0a0f1a]/95 backdrop-blur-xl border-b border-white/[0.05] py-4 px-6 hidden flex-col gap-4">
+                <a href="#features" class="text-sm text-[#a0aab8] hover:text-white transition-colors">Features</a>
+                <a href="#tools" class="text-sm text-[#a0aab8] hover:text-white transition-colors">Tools</a>
+                <a href="#pricing" class="text-sm text-[#a0aab8] hover:text-white transition-colors">Pricing</a>
+                <a href="#dashboard" class="text-sm text-[#a0aab8] hover:text-white transition-colors">Dashboard</a>
+                <button class="text-sm text-[#a0aab8] hover:text-white transition-colors text-left">Sign In</button>
+                <button class="btn-glow px-5 py-2.5 bg-gradient-to-r from-violet-600 to-blue-600 text-white text-sm font-semibold rounded-full w-fit">
+                    Start Creating
+                </button>
+            </div>
+        </nav>
+
+        <!-- Hero Section -->
+        <section class="min-h-screen flex items-center justify-center relative pt-20 pb-16 px-4">
+            <div class="max-w-6xl mx-auto text-center relative z-10">
+                <!-- Badge -->
+                <div class="inline-flex items-center gap-2 glass-card px-4 py-2 rounded-full mb-8 animate-float">
+                    <span class="pulse-dot"></span>
+                    <span class="text-sm text-[#a0aab8]">Now with AI Animation Studio</span>
+                    <span class="text-xs text-violet-400 font-semibold">New</span>
+                </div>
+
+                <!-- Headline -->
+                <h1 class="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold tracking-tight leading-[1.05] mb-6">
+                    <span class="bg-gradient-to-br from-white via-white to-gray-400 bg-clip-text text-transparent">Create Beyond</span><br>
+                    <span class="bg-gradient-to-r from-violet-400 via-blue-400 to-cyan-400 bg-clip-text text-transparent">Imagination</span>
+                </h1>
+
+                <!-- Subheadline -->
+                <p class="text-lg sm:text-xl text-[#8a94a6] max-w-2xl mx-auto mb-10 leading-relaxed">
+                    The all-in-one AI creative suite where designers generate, edit, and animate stunning assets — powered by next-generation generative AI.
+                </p>
+
+                <!-- CTA Buttons -->
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
+                    <div class="magnetic-wrapper">
+                        <button class="btn-glow px-8 py-4 bg-gradient-to-r from-violet-600 to-blue-600 text-white text-base font-semibold rounded-full w-full sm:w-auto" id="ctaPrimary">
+                            Start Creating Free
+                            <span class="ml-2">→</span>
+                        </button>
+                    </div>
+                    <div class="magnetic-wrapper">
+                        <button class="px-8 py-4 glass-card text-white text-base font-medium rounded-full w-full sm:w-auto hover:border-white/20 transition-all">
+                            Watch Demo
+                            <span class="ml-2 text-violet-400">▶</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Floating Preview Card -->
+                <div class="relative max-w-4xl mx-auto">
+                    <div class="glass-card p-3 sm:p-4 rounded-[32px] shadow-2xl shadow-violet-500/10 animate-float-delayed">
+                        <div class="bg-[#0d1320] rounded-[20px] p-4 sm:p-6 flex items-center gap-4 overflow-hidden">
+                            <div class="flex-shrink-0 w-12 h-12 rounded-xl bg-gradient-to-br from-violet-500/30 to-blue-500/30 flex items-center justify-center">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="h-3 skeleton rounded w-32 mb-2"></div>
+                                <div class="h-2 skeleton rounded w-48"></div>
+                            </div>
+                            <div class="hidden sm:flex gap-2">
+                                <div class="w-16 h-16 rounded-xl skeleton"></div>
+                                <div class="w-16 h-16 rounded-xl skeleton"></div>
+                                <div class="w-16 h-16 rounded-xl skeleton"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="absolute -top-20 -right-20 w-60 h-60 rounded-full bg-violet-500/15 blur-[100px] pointer-events-none"></div>
+                </div>
+
+                <!-- Trusted by -->
+                <div class="mt-16 flex items-center justify-center gap-8 flex-wrap opacity-50">
+                    <span class="text-xs text-[#6b7280] uppercase tracking-widest">Trusted by creators at</span>
+                    <span class="text-sm font-semibold text-[#6b7280]">Adobe</span>
+                    <span class="text-sm font-semibold text-[#6b7280]">Figma</span>
+                    <span class="text-sm font-semibold text-[#6b7280]">Spotify</span>
+                    <span class="text-sm font-semibold text-[#6b7280]">Notion</span>
+                    <span class="text-sm font-semibold text-[#6b7280]">Stripe</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Bento Grid Section -->
+        <section id="features" class="py-20 px-4 relative">
+            <div class="max-w-6xl mx-auto">
+                <div class="text-center mb-16 reveal">
+                    <span class="text-xs uppercase tracking-widest text-violet-400 font-semibold">Platform Features</span>
+                    <h2 class="text-4xl sm:text-5xl font-bold mt-3 mb-4">Everything you need.<br><span class="text-[#8a94a6]">All in one place.</span></h2>
+                </div>
+
+                <!-- Bento Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5 auto-rows-min">
+                    <!-- Card 1 - Large -->
+                    <div class="bento-card md:col-span-2 p-6 sm:p-8 reveal flex flex-col justify-between min-h-[280px]">
+                        <div>
+                            <div class="w-12 h-12 rounded-2xl bg-violet-500/20 flex items-center justify-center mb-5">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="8.5" cy="8.5" r="2"/><path d="M21 15l-5-5-4 4-3-3-4 4"/></svg>
+                            </div>
+                            <h3 class="text-xl font-bold mb-2">AI Image Generation</h3>
+                            <p class="text-[#8a94a6] text-sm max-w-md">Generate production-ready images from text prompts with unprecedented quality and control. 4K resolution in seconds.</p>
+                        </div>
+                        <div class="mt-4 flex gap-2 flex-wrap">
+                            <span class="px-3 py-1 text-xs rounded-full bg-white/[0.04] border border-white/[0.06] text-[#a0aab8]">Stable Diffusion</span>
+                            <span class="px-3 py-1 text-xs rounded-full bg-white/[0.04] border border-white/[0.06] text-[#a0aab8]">DALL·E 3</span>
+                            <span class="px-3 py-1 text-xs rounded-full bg-white/[0.04] border border-white/[0.06] text-[#a0aab8]">Midjourney</span>
+                        </div>
+                    </div>
+
+                    <!-- Card 2 -->
+                    <div class="bento-card p-6 sm:p-8 reveal flex flex-col justify-between min-h-[280px]">
+                        <div>
+                            <div class="w-12 h-12 rounded-2xl bg-blue-500/20 flex items-center justify-center mb-5">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+                            </div>
+                            <h3 class="text-xl font-bold mb-2">Vector Editing</h3>
+                            <p class="text-[#8a94a6] text-sm">Professional vector tools with AI-assisted pathfinding and auto-tracing.</p>
+                        </div>
+                        <div class="mt-4">
+                            <span class="text-2xl font-bold text-blue-400">∞</span>
+                            <span class="text-xs text-[#6b7280] ml-2">infinite canvas</span>
+                        </div>
+                    </div>
+
+                    <!-- Card 3 -->
+                    <div class="bento-card p-6 sm:p-8 reveal flex flex-col justify-between min-h-[240px]">
+                        <div>
+                            <div class="w-12 h-12 rounded-2xl bg-cyan-500/20 flex items-center justify-center mb-5">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+                            </div>
+                            <h3 class="text-xl font-bold mb-2">Animation Studio</h3>
+                            <p class="text-[#8a94a6] text-sm">Animate anything with keyframe-free AI motion generation.</p>
+                        </div>
+                    </div>
+
+                    <!-- Card 4 -->
+                    <div class="bento-card p-6 sm:p-8 reveal flex flex-col justify-between min-h-[240px]">
+                        <div>
+                            <div class="w-12 h-12 rounded-2xl bg-emerald-500/20 flex items-center justify-center mb-5">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73L13 2.27a2 2 0 0 0-2 0L4 6.27A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+                            </div>
+                            <h3 class="text-xl font-bold mb-2">3D Asset Gen</h3>
+                            <p class="text-[#8a94a6] text-sm">Generate 3D models from text or 2D references.</p>
+                        </div>
+                    </div>
+
+                    <!-- Card 5 - Stats -->
+                    <div class="bento-card md:col-span-2 p-6 sm:p-8 reveal flex items-center gap-8 flex-wrap min-h-[200px]">
+                        <div class="text-center">
+                            <div class="text-4xl font-bold metric-value bg-gradient-to-r from-violet-400 to-blue-400 bg-clip-text text-transparent" id="counterInstalls">982K</div>
+                            <div class="text-xs text-[#6b7280] mt-1">Installs</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-4xl font-bold metric-value bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">4.8</div>
+                            <div class="text-xs text-[#6b7280] mt-1 flex items-center gap-1 justify-center">⭐ Rating</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-4xl font-bold metric-value bg-gradient-to-r from-cyan-400 to-emerald-400 bg-clip-text text-transparent">50M+</div>
+                            <div class="text-xs text-[#6b7280] mt-1">Assets Created</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-4xl font-bold metric-value bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">99.9%</div>
+                            <div class="text-xs text-[#6b7280] mt-1">Uptime</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- AI Tools Section -->
+        <section id="tools" class="py-20 px-4 relative">
+            <div class="max-w-6xl mx-auto">
+                <div class="text-center mb-14 reveal">
+                    <span class="text-xs uppercase tracking-widest text-cyan-400 font-semibold">AI Tools Suite</span>
+                    <h2 class="text-4xl sm:text-5xl font-bold mt-3 mb-4">10+ Premium AI Modules</h2>
+                </div>
+
+                <!-- Tools Grid -->
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+                    <div class="glass-card p-5 text-center reveal cursor-pointer group min-h-[140px] flex flex-col items-center justify-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-violet-500/20 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">🖼️</div>
+                        <span class="text-sm font-medium">Image Gen</span>
+                    </div>
+                    <div class="glass-card p-5 text-center reveal cursor-pointer group min-h-[140px] flex flex-col items-center justify-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">✏️</div>
+                        <span class="text-sm font-medium">Vector Gen</span>
+                    </div>
+                    <div class="glass-card p-5 text-center reveal cursor-pointer group min-h-[140px] flex flex-col items-center justify-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-cyan-500/20 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">🎬</div>
+                        <span class="text-sm font-medium">Video Enhance</span>
+                    </div>
+                    <div class="glass-card p-5 text-center reveal cursor-pointer group min-h-[140px] flex flex-col items-center justify-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">🎨</div>
+                        <span class="text-sm font-medium">Motion GFX</span>
+                    </div>
+                    <div class="glass-card p-5 text-center reveal cursor-pointer group min-h-[140px] flex flex-col items-center justify-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-pink-500/20 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">✂️</div>
+                        <span class="text-sm font-medium">BG Remover</span>
+                    </div>
+                    <div class="glass-card p-5 text-center reveal cursor-pointer group min-h-[140px] flex flex-col items-center justify-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-amber-500/20 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">🏷️</div>
+                        <span class="text-sm font-medium">Logo Creator</span>
+                    </div>
+                    <div class="glass-card p-5 text-center reveal cursor-pointer group min-h-[140px] flex flex-col items-center justify-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-indigo-500/20 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">🧊</div>
+                        <span class="text-sm font-medium">3D Assets</span>
+                    </div>
+                    <div class="glass-card p-5 text-center reveal cursor-pointer group min-h-[140px] flex flex-col items-center justify-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-rose-500/20 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">🎭</div>
+                        <span class="text-sm font-medium">Brand Kit</span>
+                    </div>
+                    <div class="glass-card p-5 text-center reveal cursor-pointer group min-h-[140px] flex flex-col items-center justify-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-sky-500/20 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">✨</div>
+                        <span class="text-sm font-medium">Animation AI</span>
+                    </div>
+                    <div class="glass-card p-5 text-center reveal cursor-pointer group min-h-[140px] flex flex-col items-center justify-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-purple-500/20 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">💬</div>
+                        <span class="text-sm font-medium">Prompt Assistant</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dashboard Preview Section -->
+        <section id="dashboard" class="py-20 px-4 relative">
+            <div class="max-w-6xl mx-auto">
+                <div class="text-center mb-14 reveal">
+                    <span class="text-xs uppercase tracking-widest text-violet-400 font-semibold">SaaS Dashboard</span>
+                    <h2 class="text-4xl sm:text-5xl font-bold mt-3 mb-4">Intelligent Workspace</h2>
+                </div>
+
+                <!-- Mock Dashboard -->
+                <div class="glass-card p-5 sm:p-8 rounded-[32px] reveal overflow-hidden">
+                    <!-- Dashboard Top Bar -->
+                    <div class="flex items-center gap-4 mb-6 flex-wrap">
+                        <div class="flex items-center gap-2 bg-white/[0.03] rounded-full px-3 py-1.5 border border-white/[0.05]">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                            <span class="text-xs text-[#a0aab8]">Workspace Active</span>
+                        </div>
+                        <div class="flex-1"></div>
+                        <div class="flex gap-2">
+                            <div class="w-8 h-8 rounded-full skeleton"></div>
+                            <div class="w-8 h-8 rounded-full skeleton"></div>
+                            <div class="w-8 h-8 rounded-full skeleton"></div>
+                        </div>
+                    </div>
+
+                    <!-- Dashboard Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <!-- Sidebar mock -->
+                        <div class="hidden md:flex flex-col gap-3 p-4 bg-white/[0.02] rounded-2xl border border-white/[0.04]">
+                            <div class="h-3 skeleton rounded w-20 mb-2"></div>
+                            <div class="h-2 skeleton rounded w-full"></div>
+                            <div class="h-2 skeleton rounded w-3/4"></div>
+                            <div class="h-2 skeleton rounded w-1/2"></div>
+                            <div class="mt-3 h-3 skeleton rounded w-16"></div>
+                            <div class="h-2 skeleton rounded w-full"></div>
+                            <div class="h-2 skeleton rounded w-2/3"></div>
+                        </div>
+                        <!-- Main content mock -->
+                        <div class="md:col-span-2 flex flex-col gap-4">
+                            <div class="grid grid-cols-3 gap-3">
+                                <div class="bg-white/[0.02] rounded-2xl p-4 border border-white/[0.04]">
+                                    <div class="h-2 skeleton rounded w-12 mb-3"></div>
+                                    <div class="text-2xl font-bold text-violet-400">1,247</div>
+                                    <div class="h-2 skeleton rounded w-20 mt-1"></div>
+                                </div>
+                                <div class="bg-white/[0.02] rounded-2xl p-4 border border-white/[0.04]">
+                                    <div class="h-2 skeleton rounded w-12 mb-3"></div>
+                                    <div class="text-2xl font-bold text-blue-400">89%</div>
+                                    <div class="h-2 skeleton rounded w-20 mt-1"></div>
+                                </div>
+                                <div class="bg-white/[0.02] rounded-2xl p-4 border border-white/[0.04]">
+                                    <div class="h-2 skeleton rounded w-12 mb-3"></div>
+                                    <div class="text-2xl font-bold text-cyan-400">342</div>
+                                    <div class="h-2 skeleton rounded w-20 mt-1"></div>
+                                </div>
+                            </div>
+                            <div class="bg-white/[0.02] rounded-2xl p-5 border border-white/[0.04] flex-1 min-h-[160px]">
+                                <div class="h-3 skeleton rounded w-24 mb-4"></div>
+                                <div class="flex gap-2 items-end h-20">
+                                    <div class="w-8 h-12 rounded-md skeleton"></div>
+                                    <div class="w-8 h-20 rounded-md skeleton"></div>
+                                    <div class="w-8 h-16 rounded-md skeleton"></div>
+                                    <div class="w-8 h-10 rounded-md skeleton"></div>
+                                    <div class="w-8 h-24 rounded-md skeleton"></div>
+                                    <div class="w-8 h-14 rounded-md skeleton"></div>
+                                    <div class="w-8 h-18 rounded-md skeleton"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Floating dock mock -->
+                    <div class="mt-6 flex justify-center">
+                        <div class="glass-card rounded-full px-5 py-3 flex gap-3 items-center">
+                            <div class="w-9 h-9 rounded-full bg-violet-500/30 flex items-center justify-center cursor-pointer hover:bg-violet-500/50 transition-all">➕</div>
+                            <div class="w-9 h-9 rounded-full bg-white/[0.04] flex items-center justify-center cursor-pointer hover:bg-white/[0.08] transition-all">📁</div>
+                            <div class="w-9 h-9 rounded-full bg-white/[0.04] flex items-center justify-center cursor-pointer hover:bg-white/[0.08] transition-all">⚙️</div>
+                            <div class="w-9 h-9 rounded-full bg-white/[0.04] flex items-center justify-center cursor-pointer hover:bg-white/[0.08] transition-all">🔍</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pricing Section -->
+        <section id="pricing" class="py-20 px-4 relative">
+            <div class="max-w-5xl mx-auto">
+                <div class="text-center mb-14 reveal">
+                    <span class="text-xs uppercase tracking-widest text-violet-400 font-semibold">Pricing</span>
+                    <h2 class="text-4xl sm:text-5xl font-bold mt-3 mb-4">Simple, transparent pricing</h2>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Free Tier -->
+                    <div class="glass-card p-7 reveal text-center flex flex-col gap-5">
+                        <h3 class="text-lg font-bold">Starter</h3>
+                        <div class="text-5xl font-extrabold">Free</div>
+                        <p class="text-[#8a94a6] text-sm">Perfect for trying out</p>
+                        <ul class="text-sm text-left space-y-2 text-[#a0aab8]">
+                            <li>✓ 50 AI credits / month</li>
+                            <li>✓ Basic image generation</li>
+                            <li>✓ 720p exports</li>
+                            <li>✓ Community support</li>
+                        </ul>
+                        <button class="w-full py-3 rounded-full glass-card hover:border-white/20 transition-all font-medium">Get Started</button>
+                    </div>
+                    <!-- Pro Tier - Highlighted -->
+                    <div class="glass-card p-7 reveal text-center flex flex-col gap-5 relative glow-ring rounded-[32px] border-violet-500/30">
+                        <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-violet-500 to-blue-500 text-white text-xs font-bold px-4 py-1 rounded-full">Most Popular</div>
+                        <h3 class="text-lg font-bold mt-2">Professional</h3>
+                        <div class="text-5xl font-extrabold bg-gradient-to-r from-violet-400 to-blue-400 bg-clip-text text-transparent">$29</div>
+                        <p class="text-[#8a94a6] text-sm">/month</p>
+                        <ul class="text-sm text-left space-y-2 text-[#a0aab8]">
+                            <li>✓ 2,000 AI credits / month</li>
+                            <li>✓ 4K image generation</li>
+                            <li>✓ Vector & animation tools</li>
+                            <li>✓ Priority processing</li>
+                            <li>✓ Team collaboration</li>
+                        </ul>
+                        <button class="w-full py-3 rounded-full bg-gradient-to-r from-violet-600 to-blue-600 text-white font-semibold btn-glow">Start Pro</button>
+                    </div>
+                    <!-- Enterprise Tier -->
+                    <div class="glass-card p-7 reveal text-center flex flex-col gap-5">
+                        <h3 class="text-lg font-bold">Enterprise</h3>
+                        <div class="text-5xl font-extrabold">$99</div>
+                        <p class="text-[#8a94a6] text-sm">/month</p>
+                        <ul class="text-sm text-left space-y-2 text-[#a0aab8]">
+                            <li>✓ Unlimited AI credits</li>
+                            <li>✓ 8K exports</li>
+                            <li>✓ Custom AI model training</li>
+                            <li>✓ Dedicated support</li>
+                            <li>✓ SSO & advanced security</li>
+                        </ul>
+                        <button class="w-full py-3 rounded-full glass-card hover:border-white/20 transition-all font-medium">Contact Sales</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Testimonials -->
+        <section class="py-20 px-4 relative">
+            <div class="max-w-5xl mx-auto">
+                <div class="text-center mb-14 reveal">
+                    <span class="text-xs uppercase tracking-widest text-cyan-400 font-semibold">Testimonials</span>
+                    <h2 class="text-4xl sm:text-5xl font-bold mt-3 mb-4">Loved by designers</h2>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    <div class="glass-card p-6 reveal flex gap-4 items-start">
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-violet-400 to-blue-400 flex-shrink-0 flex items-center justify-center text-white font-bold">DX</div>
+                        <div>
+                            <p class="text-[#c0c8d4] text-sm leading-relaxed mb-3">"Replaced 4 apps with this one. The AI image generation is remarkably good and the animation tools saved our team countless hours."</p>
+                            <span class="text-xs font-semibold text-white">DesignerX</span>
+                            <span class="text-xs text-[#6b7280] ml-2">• Creative Director</span>
+                        </div>
+                    </div>
+                    <div class="glass-card p-6 reveal flex gap-4 items-start">
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-cyan-400 to-emerald-400 flex-shrink-0 flex items-center justify-center text-white font-bold">SM</div>
+                        <div>
+                            <p class="text-[#c0c8d4] text-sm leading-relaxed mb-3">"The vector editing with AI assistance is a game-changer. It feels like having a design partner that anticipates every move."</p>
+                            <span class="text-xs font-semibold text-white">Sarah M.</span>
+                            <span class="text-xs text-[#6b7280] ml-2">• UI/UX Lead</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="py-12 px-4 border-t border-white/[0.04]">
+            <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-blue-500"></div>
+                    <span class="text-sm font-bold text-white">Luminar Studio</span>
+                </div>
+                <div class="flex gap-6 text-xs text-[#6b7280]">
+                    <a href="#" class="hover:text-white transition-colors">Privacy</a>
+                    <a href="#" class="hover:text-white transition-colors">Terms</a>
+                    <a href="#" class="hover:text-white transition-colors">Docs</a>
+                    <a href="#" class="hover:text-white transition-colors">API</a>
+                </div>
+                <span class="text-xs text-[#4b5563]">© 2026 Luminar Studio. All rights reserved.</span>
+            </div>
+        </footer>
     </div>
-    <div id="login-fields">
-      <div class="auth-input-group">
-        <label>Email</label>
-        <input type="email" id="login-email" placeholder="surveyor@example.com" autocomplete="email">
-      </div>
-      <div class="auth-input-group">
-        <label>Password</label>
-        <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password">
-      </div>
-    </div>
-    <div id="signup-fields" style="display:none;">
-      <div class="auth-input-group">
-        <label>Firm Name</label>
-        <input type="text" id="signup-shopname" placeholder="Precision Surveys Ltd" autocomplete="organization">
-      </div>
-      <div class="auth-input-group">
-        <label>Email</label>
-        <input type="email" id="signup-email" placeholder="surveyor@example.com" autocomplete="email">
-      </div>
-      <div class="auth-input-group">
-        <label>Password</label>
-        <input type="password" id="signup-password" placeholder="min. 6 characters" autocomplete="new-password">
-      </div>
-    </div>
-    <div class="auth-error" id="auth-error"></div>
-    <button class="auth-submit-btn" id="auth-submit-btn" onclick="authSubmit()">Sign In</button>
-    <div class="auth-switch-text" id="auth-switch-msg">
-      Don't have an account? <span class="auth-switch-link" onclick="authSetTab('signup')">Sign up</span>
-    </div>
-    <div class="auth-logout-link" id="auth-logout-link" style="display:none;" onclick="authLogout()">← Sign out</div>
-  </div>
-</div>
 
-<!-- MAIN APP -->
-<div id="app" style="display:none;">
-<div id="hdr">
-  <div class="hdr-row">
-    <div>
-      <div class="brand-eye">Survey Duka</div>
-      <div class="brand-name"><span id="shop-name-display">My Firm</span></div>
-    </div>
-    <div class="hdr-actions">
-      <button class="logout-btn" onclick="authLogout()" title="Sign out">↪</button>
-      <button class="rpt-btn" onclick="openReport()">📞 Report</button>
-    </div>
-  </div>
-  <div id="low" style="display:none">⚠ <span id="low-text"></span></div>
-</div>
-<div id="content">
-  <div id="pane-dashboard" class="pane on">
-    <div class="hero"><div class="hero-label">Today's Revenue</div><div class="hero-num"><span class="hero-cur">KES</span><span id="h-total">0</span></div><div class="hero-row"><div class="pill pos" id="h-pill">↑ <span id="h-profit">0</span> profit</div><div class="hero-date" id="h-date"></div></div></div>
-    <div class="sgrid"><div class="sc gn"><div class="sc-ico gn">📱</div><div class="sc-val" id="s-mpesa">KES 0</div><div class="sc-lbl">M-Pesa</div></div><div class="sc am"><div class="sc-ico am">💵</div><div class="sc-val" id="s-cash">KES 0</div><div class="sc-lbl">Cash</div></div><div class="sc bl"><div class="sc-ico bl">📐</div><div class="sc-val" id="s-jobs">0</div><div class="sc-lbl">Jobs</div></div><div class="sc rd"><div class="sc-ico rd">📋</div><div class="sc-val" id="s-exp">KES 0</div><div class="sc-lbl">Expenses</div></div></div>
-    <div class="card"><div class="sec-lbl">Payment Split</div><div class="split-row"><svg id="dsvg" width="96" height="96" viewBox="0 0 96 96"><circle cx="48" cy="48" r="37" fill="none" stroke="#121A14" stroke-width="13"/><circle id="dc-m" cx="48" cy="48" r="37" fill="none" stroke="#0A9167" stroke-width="13" stroke-dasharray="0 232" stroke-linecap="round" transform="rotate(-90 48 48)"/><circle id="dc-c" cx="48" cy="48" r="37" fill="none" stroke="#C8883A" stroke-width="13" stroke-dasharray="0 232" stroke-linecap="round" transform="rotate(-90 48 48)"/></svg><div class="leg"><div class="leg-item"><div><div class="leg-left"><div class="leg-dot" style="background:var(--em)"></div><div class="leg-name">M-Pesa</div></div><div class="leg-val" id="l-mpesa">KES 0</div></div><div class="leg-pct" id="l-mpct">0%</div></div><div class="leg-div"></div><div class="leg-item"><div><div class="leg-left"><div class="leg-dot" style="background:var(--gold)"></div><div class="leg-name">Cash</div></div><div class="leg-val" id="l-cash">KES 0</div></div><div class="leg-pct" id="l-cpct">0%</div></div></div></div></div>
-    <div class="card"><div class="sec-lbl">This Week</div><div class="bars" id="bars"></div></div>
-    <div class="rec-card"><div class="rec-hdr"><div class="sec-lbl">Recent Jobs</div></div><div id="recent"></div></div>
-  </div>
+    <script>
+        // ─────────────────────────────────────
+        // THREE.JS — Particle Mesh Background
+        // ─────────────────────────────────────
+        (function() {
+            const canvas = document.getElementById('bg-canvas');
+            const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.setSize(window.innerWidth, window.innerHeight);
 
-  <!-- Jobs Pane -->
-  <div id="pane-sales" class="pane"><div class="phdr"><div><div class="plbl">Today's Jobs</div><div class="ptotal" id="p-sales">KES 0</div></div><button class="addbtn" onclick="openModal('job')">＋ New Job</button></div>
-  <div class="filter-row"><button class="filter-btn active" data-status="all" onclick="filterJobs('all')">All</button><button class="filter-btn" data-status="upcoming" onclick="filterJobs('upcoming')">Upcoming</button><button class="filter-btn" data-status="completed" onclick="filterJobs('completed')">Completed</button></div>
-  <div id="jobs-list"></div></div>
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 100);
+            camera.position.z = 30;
 
-  <!-- Analytics Pane -->
-  <div id="pane-analytics" class="pane"><div class="phdr"><div><div class="plbl">Firm Insights</div><div class="ptotal" style="font-size:20px;">Analytics</div></div></div><div class="time-filter"><button class="tf-btn on" id="tf-today" onclick="setTimeFilter('today')">Today</button><button class="tf-btn" id="tf-weekly" onclick="setTimeFilter('weekly')">Weekly</button><button class="tf-btn" id="tf-monthly" onclick="setTimeFilter('monthly')">Monthly</button></div>
-  <div class="card"><div class="sec-lbl">Profit & Loss</div><div class="pl-grid" id="pl-cards"></div></div>
-  <div class="card"><div class="sec-lbl">Top Survey Types</div><div id="top-survey-types"></div></div>
-  <div class="card"><div class="sec-lbl">Top Clients</div><div id="top-clients"></div></div></div>
+            const isMobile = /Mobi|Android/i.test(navigator.userAgent) || window.innerWidth < 768;
+            const particleCount = isMobile ? 180 : 400;
+            const positions = new Float32Array(particleCount * 3);
+            const colors = new Float32Array(particleCount * 3);
 
-  <!-- Clients Pane -->
-  <div id="pane-customers" class="pane"><div class="phdr"><div><div class="plbl">Clients</div><div class="ptotal" id="p-cust">0 Clients</div></div><button class="addbtn" onclick="openModal('addCustomer')">＋ Add Client</button></div>
-  <div class="cust-search-box" style="display:flex;gap:10px;background:rgba(12,19,16,0.75);border:1px solid var(--border);border-radius:var(--r2);padding:6px 14px;margin-bottom:10px;"><span>🔍</span><input type="text" id="cust-search-input" placeholder="Search clients…" oninput="filterCustomers()" style="flex:1;background:transparent;border:none;outline:none;color:var(--text);"></div>
-  <div id="cust-list"></div></div>
+            for (let i = 0; i < particleCount; i++) {
+                positions[i * 3] = (Math.random() - 0.5) * 50;
+                positions[i * 3 + 1] = (Math.random() - 0.5) * 35;
+                positions[i * 3 + 2] = (Math.random() - 0.5) * 25;
 
-  <!-- Expenses Pane -->
-  <div id="pane-expenses" class="pane"><div class="phdr"><div><div class="plbl">Firm Expenses</div><div class="ptotal" id="p-exp" style="color:#FB8097">KES 0</div></div><button class="addbtn" onclick="openModal('expense')">＋ Add</button></div><div class="export-row"><button class="export-btn" onclick="exportExpensesCSV()">⬇ Export CSV</button></div><div id="exp-list"></div></div>
-</div>
+                const r = 0.35 + Math.random() * 0.2;
+                const g = 0.2 + Math.random() * 0.3;
+                const b = 0.6 + Math.random() * 0.4;
+                colors[i * 3] = r;
+                colors[i * 3 + 1] = g;
+                colors[i * 3 + 2] = b;
+            }
 
-<nav id="nav">
-  <button class="nitem on" id="ni-dashboard" onclick="switchTab('dashboard')"><div class="nico">⚡</div>Home</button>
-  <button class="nitem" id="ni-sales" onclick="switchTab('sales')"><div class="nico">📐</div>Jobs</button>
-  <button class="nitem" id="ni-analytics" onclick="switchTab('analytics')"><div class="nico">📊</div>Insights</button>
-  <button class="nitem" id="ni-customers" onclick="switchTab('customers')"><div class="nico">👥</div>Clients</button>
-  <button class="nitem" id="ni-expenses" onclick="switchTab('expenses')"><div class="nico">💸</div>Costs</button>
-</nav>
-<button id="fab" onclick="fabClick()">＋</button>
-</div>
+            const geometry = new THREE.BufferGeometry();
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 
-<!-- MODALS -->
-<!-- Job Modal -->
-<div class="moverlay" id="mo-job"><div class="msheet"><div class="mhandle"></div><div class="mhdr"><div class="mtitle">New Survey Job</div><button class="mclose" onclick="cm('job')">✕</button></div>
-<div class="fld"><label>Client Name</label><input type="text" id="job-client" placeholder="e.g. Acme Developers"></div>
-<div class="fld"><label>Location</label><input type="text" id="job-location" placeholder="e.g. Plot 123, Karen"></div>
-<div class="fld"><label>Survey Type</label><select id="job-type"><option value="Topographic">Topographic</option><option value="Boundary">Boundary</option><option value="Construction">Construction</option><option value="Subdivision">Subdivision</option><option value="Other">Other</option></select></div>
-<div class="fld"><label>Date</label><input type="date" id="job-date"></div>
-<div class="fld"><label>Fee (KES)</label><input type="number" id="job-fee"></div>
-<div class="fld"><label>Payment Method</label><div class="ptog"><button class="popt sc" id="pc" onclick="sp('cash')">💵 Cash</button><button class="popt" id="pm" onclick="sp('mpesa')">📱 M-Pesa</button></div></div>
-<button class="sbtn am" onclick="recordJob()">Save Job →</button></div></div>
+            const material = new THREE.PointsMaterial({
+                size: isMobile ? 0.08 : 0.06,
+                vertexColors: true,
+                blending: THREE.AdditiveBlending,
+                depthWrite: false,
+                transparent: true,
+                opacity: 0.7,
+            });
 
-<!-- Expense Modal -->
-<div class="moverlay" id="mo-expense"><div class="msheet"><div class="mhandle"></div><div class="mhdr"><div class="mtitle">Add Expense</div><button class="mclose" onclick="cm('expense')">✕</button></div><div class="fld"><label>Title</label><input type="text" id="et"></div><div class="fld"><label>Amount (KES)</label><input type="number" id="ea"></div><button class="sbtn rd" onclick="addExpense()">Record Expense →</button></div></div>
+            const particles = new THREE.Points(geometry, material);
+            scene.add(particles);
 
-<!-- Client Modal -->
-<div class="moverlay" id="mo-addCustomer"><div class="msheet"><div class="mhandle"></div><div class="mhdr"><div class="mtitle">Add Client</div><button class="mclose" onclick="cm('addCustomer')">✕</button></div><div class="fld"><label>Name / Company</label><input type="text" id="cn-name"></div><div class="fld"><label>Phone</label><input type="tel" id="cn-phone"></div><div class="fld"><label>Email</label><input type="email" id="cn-email"></div><button class="sbtn bl" onclick="addCustomer()">Add Client →</button></div></div>
+            const lineGeometry = new THREE.BufferGeometry();
+            const linePositionsArr = [];
+            const threshold = isMobile ? 7 : 6;
+            for (let i = 0; i < particleCount; i++) {
+                for (let j = i + 1; j < particleCount; j++) {
+                    const dx = positions[i * 3] - positions[j * 3];
+                    const dy = positions[i * 3 + 1] - positions[j * 3 + 1];
+                    const dz = positions[i * 3 + 2] - positions[j * 3 + 2];
+                    const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+                    if (dist < threshold) {
+                        linePositionsArr.push(
+                            positions[i * 3], positions[i * 3 + 1], positions[i * 3 + 2],
+                            positions[j * 3], positions[j * 3 + 1], positions[j * 3 + 2]
+                        );
+                    }
+                }
+            }
+            const linePositions = new Float32Array(linePositionsArr);
+            lineGeometry.setAttribute('position', new THREE.BufferAttribute(linePositions, 3));
+            const lineMaterial = new THREE.LineBasicMaterial({
+                color: 0x3b3f6b,
+                transparent: true,
+                opacity: 0.15,
+                blending: THREE.AdditiveBlending,
+                depthWrite: false,
+            });
+            const lines = new THREE.LineSegments(lineGeometry, lineMaterial);
+            scene.add(lines);
 
-<!-- Report Modal -->
-<div class="moverlay" id="mo-report"><div class="msheet"><div class="mhandle"></div><div class="mhdr"><div class="mtitle">Daily Report</div><button class="mclose" onclick="cm('report')">✕</button></div><div class="rmbox" style="background:var(--s2);padding:18px;border-radius:var(--r2);"><textarea id="rta" rows="6" class="rta" style="width:100%;background:transparent;color:var(--text2);border:none;" readonly></textarea></div><a id="wa-link" href="#" target="_blank" class="wa-btn" style="display:flex;align-items:center;justify-content:center;gap:10px;background:#16A34A;padding:14px;border-radius:var(--r2);color:white;text-decoration:none;margin-bottom:10px;">📱 Open in WhatsApp</a><button class="cpybtn" onclick="copyRpt()" style="width:100%;padding:12px;background:var(--s2);border:1px solid var(--border);border-radius:var(--r2);color:var(--text2);">📋 Copy Message</button></div></div>
+            let mouseX = 0, mouseY = 0;
+            document.addEventListener('mousemove', (e) => {
+                mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+                mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+            });
 
-<script>
-/* ════════════════════════════════════════════════════════════
-   AUTH SYSTEM — Email Sign In / Sign Up
-   ═══════════════════════════════════════════════════════════ */
-const AUTH_SALT = 'survey_duka_salt_v1';
-const SESSION_KEY = 'dm_session';
-const USERS_KEY = 'dm_users';
-let currentUser = null;
-let db = null;
+            function animate() {
+                requestAnimationFrame(animate);
+                particles.rotation.y += 0.0003;
+                particles.rotation.x += 0.0002;
+                lines.rotation.y += 0.0003;
+                lines.rotation.x += 0.0002;
 
-async function hashPassword(p){const e=new TextEncoder();const d=e.encode(p+AUTH_SALT);const b=await crypto.subtle.digest('SHA-256',d);return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('');}
-function generateUserId(){return 'user_'+Date.now()+'_'+Math.random().toString(36).substr(2,9);}
-function getUsers(){return JSON.parse(localStorage.getItem(USERS_KEY)||'[]');}
-function saveUsers(u){localStorage.setItem(USERS_KEY,JSON.stringify(u));}
-function findUserByEmail(e){return getUsers().find(u=>u.email.toLowerCase()===e.toLowerCase());}
-function createSession(user){const s={userId:user.id,email:user.email,shopName:user.shopName,expires:Date.now()+8*60*60*1000};localStorage.setItem(SESSION_KEY,JSON.stringify(s));currentUser={id:user.id,email:user.email,shopName:user.shopName};updateShopNameDisplay();return s;}
-function getSession(){try{const s=JSON.parse(localStorage.getItem(SESSION_KEY)||'null');if(!s)return null;if(Date.now()>s.expires){localStorage.removeItem(SESSION_KEY);return null;}currentUser={id:s.userId,email:s.email,shopName:s.shopName};updateShopNameDisplay();return s;}catch{return null;}}
-function clearSession(){localStorage.removeItem(SESSION_KEY);currentUser=null;}
-function updateShopNameDisplay(){const d=document.getElementById('shop-name-display');if(d&&currentUser)d.textContent=currentUser.shopName||'Survey Duka';}
-const BASE_DB_NAME='survey_duka';let DB_VERSION=3;
-function getUserDBName(uid){return BASE_DB_NAME+'_'+uid;}
-async function openUserDB(uid){return new Promise((res,rej)=>{const r=indexedDB.open(getUserDBName(uid),DB_VERSION);r.onerror=()=>rej(r.error);r.onsuccess=()=>{db=r.result;res(db);};r.onupgradeneeded=(ev)=>{const db=ev.target.result;if(!db.objectStoreNames.contains('jobs'))db.createObjectStore('jobs',{keyPath:'id',autoIncrement:true});if(!db.objectStoreNames.contains('expenses'))db.createObjectStore('expenses',{keyPath:'id',autoIncrement:true});if(!db.objectStoreNames.contains('customers'))db.createObjectStore('customers',{keyPath:'id',autoIncrement:true});};});}
+                particles.rotation.y += mouseX * 0.0005;
+                particles.rotation.x += mouseY * 0.0004;
+                lines.rotation.y += mouseX * 0.0005;
+                lines.rotation.x += mouseY * 0.0004;
 
-let authMode='login';
-function authSetTab(m){authMode=m;document.getElementById('tab-login').classList.toggle('active',m==='login');document.getElementById('tab-signup').classList.toggle('active',m==='signup');document.getElementById('login-fields').style.display=m==='login'?'block':'none';document.getElementById('signup-fields').style.display=m==='signup'?'block':'none';document.getElementById('auth-submit-btn').textContent=m==='login'?'Sign In':'Create Account';document.getElementById('auth-switch-msg').innerHTML=m==='login'?`Don't have an account? <span class="auth-switch-link" onclick="authSetTab('signup')">Sign up</span>`:`Already have an account? <span class="auth-switch-link" onclick="authSetTab('login')">Sign in</span>`;}
-function showAuthError(m){const e=document.getElementById('auth-error');e.textContent=m;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),4000);}
-async function authSubmit(){const email=(authMode==='login'?document.getElementById('login-email'):document.getElementById('signup-email')).value.trim();const pwd=(authMode==='login'?document.getElementById('login-password'):document.getElementById('signup-password')).value;if(!email||!pwd)return showAuthError('Email and password required');if(authMode==='signup'){const shop=document.getElementById('signup-shopname').value.trim();if(!shop)return showAuthError('Firm name required');if(pwd.length<6)return showAuthError('Password min 6 chars');const users=getUsers();if(findUserByEmail(email))return showAuthError('Email already registered');const hash=await hashPassword(pwd);const newUser={id:generateUserId(),email:email.toLowerCase(),passwordHash:hash,shopName:shop};users.push(newUser);saveUsers(users);createSession(newUser);await openUserDB(newUser.id);await initSampleData();await loadData();showApp();}else{const user=findUserByEmail(email);if(!user)return showAuthError('Invalid email or password');const hash=await hashPassword(pwd);if(hash!==user.passwordHash)return showAuthError('Invalid email or password');createSession(user);await openUserDB(user.id);await loadData();showApp();}}
-function showApp(){document.getElementById('auth-overlay').classList.add('auth-hide');setTimeout(()=>{document.getElementById('auth-overlay').style.display='none';document.getElementById('app').style.display='flex';},420);renderAll();document.getElementById('h-date').textContent=new Date().toLocaleDateString('en-KE',{weekday:'short',day:'numeric',month:'short'});}
-function authLogout(){if(confirm('Sign out?')){clearSession();db=null;document.getElementById('app').style.display='none';document.getElementById('auth-overlay').style.display='flex';document.getElementById('auth-overlay').classList.remove('auth-hide');authSetTab('login');['login-email','login-password','signup-shopname','signup-email','signup-password'].forEach(id=>document.getElementById(id).value='');document.querySelectorAll('.moverlay.on').forEach(m=>m.classList.remove('on'));}}
+                renderer.render(scene, camera);
+            }
+            animate();
 
-// --- Sample data ---
-async function initSampleData(){
-  const customers=await getAll('customers');
-  if(customers.length===0){
-    await addItem('customers',{name:'Acme Developers',phone:'0712 345 678',email:'projects@acme.co.ke'});
-    await addItem('customers',{name:'Greenfield Properties',phone:'0723 456 789',email:'info@greenfield.co.ke'});
-  }
-  const jobs=await getAll('jobs');
-  if(jobs.length===0){
-    await addItem('jobs',{client:'Acme Developers',location:'Plot 45, Westlands',type:'Topographic',date:new Date().toISOString().split('T')[0],fee:45000,payment_method:'cash'});
-  }
-}
+            let resizeTimeout;
+            window.addEventListener('resize', () => {
+                clearTimeout(resizeTimeout);
+                resizeTimeout = setTimeout(() => {
+                    camera.aspect = window.innerWidth / window.innerHeight;
+                    camera.updateProjectionMatrix();
+                    renderer.setSize(window.innerWidth, window.innerHeight);
+                }, 150);
+            });
+        })();
 
-// --- Data ops ---
-let jobs=[], expenses=[], customers=[], payM='cash', curTab='dashboard', analyticsFilter='today', jobFilter='all', custSearch='';
-async function getAll(s){return new Promise((res,rej)=>{const r=db.transaction(s,'readonly').objectStore(s).getAll();r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error);});}
-async function addItem(s,i){return new Promise((res,rej)=>{const r=db.transaction(s,'readwrite').objectStore(s).add(i);r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error);});}
-async function updateItem(s,i){return new Promise((res,rej)=>{const r=db.transaction(s,'readwrite').objectStore(s).put(i);r.onsuccess=()=>res();r.onerror=()=>rej(r.error);});}
-async function deleteItem(s,id){return new Promise((res,rej)=>{const r=db.transaction(s,'readwrite').objectStore(s).delete(id);r.onsuccess=()=>res();r.onerror=()=>rej(r.error);});}
-async function loadData(){jobs=await getAll('jobs');expenses=await getAll('expenses');customers=await getAll('customers');}
-async function refreshData(){await loadData();renderAll();}
-const fmt=n=>'KES '+Number(n||0).toLocaleString('en-KE',{maximumFractionDigits:0});
-const fmtShort=n=>{let v=Math.abs(n||0);return v>=1000?(n<0?'-':'')+(v/1000).toFixed(1)+'K':String(Math.round(n||0));};
+        // ─────────────────────────────────────
+        // CURSOR GLOW FOLLOWER
+        // ─────────────────────────────────────
+        (function() {
+            const glow = document.getElementById('cursorGlow');
+            document.addEventListener('mousemove', (e) => {
+                glow.style.left = e.clientX + 'px';
+                glow.style.top = e.clientY + 'px';
+                glow.style.opacity = '1';
+            });
+            document.addEventListener('mouseleave', () => {
+                glow.style.opacity = '0';
+            });
+        })();
 
-function calc(){
-  const total=jobs.reduce((s,x)=>s+(x.fee||0),0);
-  const exp=expenses.reduce((s,x)=>s+x.amount,0);
-  const mpesa=jobs.filter(j=>j.payment_method==='mpesa').reduce((s,j)=>s+(j.fee||0),0);
-  const cash=jobs.filter(j=>j.payment_method==='cash').reduce((s,j)=>s+(j.fee||0),0);
-  const profit=total-exp;
-  return{total,exp,mpesa,cash,profit};
-}
+        // ─────────────────────────────────────
+        // GSAP SCROLL REVEAL (fixed conflict)
+        // ─────────────────────────────────────
+        (function() {
+            gsap.registerPlugin(ScrollTrigger);
+            const reveals = document.querySelectorAll('.reveal');
+            reveals.forEach((el) => {
+                gsap.fromTo(el, { opacity: 0, y: 40 }, {
+                    opacity: 1,
+                    y: 0,
+                    duration: 1,
+                    ease: 'power3.out',
+                    scrollTrigger: {
+                        trigger: el,
+                        start: 'top 85%',
+                        toggleActions: 'play none none none',
+                    },
+                });
+            });
+        })();
 
-function renderDashboard(){
-  const{total,exp,mpesa,cash,profit}=calc();const circ=2*Math.PI*37;
-  document.getElementById('h-total').textContent=total.toLocaleString();
-  const pp=document.getElementById('h-pill');pp.innerHTML=(profit>=0?'↑ ':'↓ ')+`<span>${fmt(Math.abs(profit))}</span>&nbsp;profit`;
-  pp.className='pill '+(profit>=0?'pos':'neg');
-  document.getElementById('s-mpesa').textContent=fmt(mpesa);
-  document.getElementById('s-cash').textContent=fmt(cash);
-  document.getElementById('s-jobs').textContent=jobs.length;
-  document.getElementById('s-exp').textContent=fmt(exp);
-  const mf=total?mpesa/total:0,cf=total?cash/total:0;
-  document.getElementById('dc-m').setAttribute('stroke-dasharray',`${Math.max(0,mf*circ-3)} ${circ}`);
-  document.getElementById('dc-c').setAttribute('stroke-dasharray',`${Math.max(0,cf*circ-3)} ${circ}`);
-  document.getElementById('dc-c').setAttribute('stroke-dashoffset',-(mf*circ+3));
-  document.getElementById('l-mpesa').textContent=fmt(mpesa);
-  document.getElementById('l-cash').textContent=fmt(cash);
-  document.getElementById('l-mpct').textContent=total?Math.round(mf*100)+'%':'0%';
-  document.getElementById('l-cpct').textContent=total?Math.round(cf*100)+'%':'0%';
-  document.getElementById('recent').innerHTML=jobs.slice().reverse().slice(0,4).map(j=>`<div class="srow"><div><div class="sname">${j.client||'Client'}</div><span class="sbadge ${j.payment_method||'cash'}">${j.payment_method==='mpesa'?'📱 M-Pesa':'💵 Cash'}</span></div><div class="samt">${fmt(j.fee||0)}</div></div>`).join('');
-  const wBase=[3200,4800,3900,5200,6100,7400,total];const maxW=Math.max(...wBase);
-  document.getElementById('bars').innerHTML=['Mon','Tue','Wed','Thu','Fri','Sat','Today'].map((d,i)=>{const v=wBase[i];const p=Math.max(5,(v/maxW)*100);return `<div class="bcol"><div class="bbg"><div class="bfill${i===6?' today':''}" style="height:${p}%"></div></div><div class="bday${i===6?' today':''}">${d}</div></div>`;}).join('');
-}
+        // ─────────────────────────────────────
+        // NAVBAR SCROLL EFFECT
+        // ─────────────────────────────────────
+        (function() {
+            const navbar = document.getElementById('navbar');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    navbar.style.background = 'rgba(6, 8, 15, 0.85)';
+                    navbar.style.boxShadow = '0 4px 30px rgba(0,0,0,0.5)';
+                } else {
+                    navbar.style.background = 'rgba(8, 12, 22, 0.7)';
+                    navbar.style.boxShadow = 'none';
+                }
+            });
+        })();
 
-function renderJobs(){
-  const filtered=jobs.filter(j=>{
-    if(jobFilter==='upcoming') return new Date(j.date) > new Date().setHours(0,0,0,0);
-    if(jobFilter==='completed') return new Date(j.date) <= new Date().setHours(0,0,0,0);
-    return true;
-  }).sort((a,b)=>new Date(b.date)-new Date(a.date));
-  document.getElementById('p-sales').textContent=fmt(jobs.reduce((s,x)=>s+(x.fee||0),0));
-  document.getElementById('jobs-list').innerHTML=filtered.map(j=>{
-    return `<div class="litem"><div class="litem-row"><div class="litem-content"><div class="iname">${j.client||'Client'}</div><div class="imeta"><span class="survey-type-badge">${j.type||'Survey'}</span><span class="mp">📍 ${j.location||''}</span><span class="job-date">📅 ${new Date(j.date).toLocaleDateString()}</span></div></div><div class="litem-actions"><div class="samt">${fmt(j.fee||0)}</div><button class="delete-btn" onclick="deleteJob(${j.id})">🗑️</button></div></div></div>`;
-  }).join('');
-}
-async function deleteJob(id){if(confirm('Delete job?')){await deleteItem('jobs',id);await refreshData();}}
-function filterJobs(f){jobFilter=f;document.querySelectorAll('#pane-sales .filter-btn').forEach(b=>b.classList.toggle('active',b.dataset.status===f));renderJobs();}
+        // ─────────────────────────────────────
+        // MAGNETIC WRAPPERS (no button conflict)
+        // ─────────────────────────────────────
+        (function() {
+            const wrappers = document.querySelectorAll('.magnetic-wrapper');
+            wrappers.forEach((wrapper) => {
+                let boundX = 0, boundY = 0;
+                let currentX = 0, currentY = 0;
 
-function renderExpenses(){
-  document.getElementById('p-exp').textContent=fmt(expenses.reduce((s,x)=>s+x.amount,0));
-  document.getElementById('exp-list').innerHTML=expenses.slice().reverse().map(e=>`<div class="litem"><div class="litem-row"><div class="litem-content"><div class="ename">${e.title}</div><div class="edate">${new Date(e.date).toLocaleDateString()}</div></div><div class="litem-actions"><div class="eamt">${fmt(e.amount)}</div><button class="delete-btn" onclick="deleteExpense(${e.id})">🗑️</button></div></div></div>`).join('');
-}
-async function deleteExpense(id){if(confirm('Delete expense?')){await deleteItem('expenses',id);await refreshData();}}
+                wrapper.addEventListener('mousemove', (e) => {
+                    const rect = wrapper.getBoundingClientRect();
+                    boundX = (e.clientX - rect.left - rect.width / 2) * 0.2;
+                    boundY = (e.clientY - rect.top - rect.height / 2) * 0.2;
+                });
+                wrapper.addEventListener('mouseleave', () => {
+                    boundX = 0;
+                    boundY = 0;
+                });
 
-function renderCustomers(){
-  const filtered=customers.filter(c=>c.name.toLowerCase().includes(custSearch)||(c.phone||'').includes(custSearch)||(c.email||'').includes(custSearch));
-  document.getElementById('p-cust').textContent=customers.length+' Client'+(customers.length!==1?'s':'');
-  document.getElementById('cust-list').innerHTML=filtered.map(c=>`<div class="litem"><div class="litem-row"><div class="litem-content"><div class="iname">${c.name}</div><div class="imeta">${c.phone?`📞 ${c.phone}`:''} ${c.email?`✉️ ${c.email}`:''}</div></div><div class="litem-actions"><button class="delete-btn" onclick="deleteCustomer(${c.id})">🗑️</button></div></div></div>`).join('');
-}
-async function deleteCustomer(id){if(confirm('Delete client?')){await deleteItem('customers',id);await refreshData();}}
+                function animateMagnetic() {
+                    currentX += (boundX - currentX) * 0.25;
+                    currentY += (boundY - currentY) * 0.25;
+                    wrapper.style.transform = `translate(${currentX}px, ${currentY}px)`;
+                    requestAnimationFrame(animateMagnetic);
+                }
+                animateMagnetic();
+            });
+        })();
 
-function renderAnalytics(){
-  const filterJobs=(f)=>{const now=new Date();return jobs.filter(j=>{const d=new Date(j.date);if(f==='today')return d.toDateString()===now.toDateString();if(f==='weekly')return (now-d)<=7*86400000;if(f==='monthly')return (now-d)<=30*86400000;return true;});};
-  const rev=filterJobs(analyticsFilter).reduce((s,x)=>s+(x.fee||0),0);
-  const expNow=new Date();const expFiltered=expenses.filter(e=>{const d=new Date(e.date);if(analyticsFilter==='today')return d.toDateString()===expNow.toDateString();if(analyticsFilter==='weekly')return (expNow-d)<=7*86400000;if(analyticsFilter==='monthly')return (expNow-d)<=30*86400000;return true;});
-  const totalExp=expFiltered.reduce((s,x)=>s+x.amount,0);
-  const profit=rev-totalExp;
-  document.getElementById('pl-cards').innerHTML=`<div class="pl-card gold-t"><div class="pl-card-lbl">Revenue</div><div class="pl-card-val gold">${fmt(rev)}</div></div><div class="pl-card sapp-t"><div class="pl-card-lbl">Expenses</div><div class="pl-card-val neutral">${fmt(totalExp)}</div></div><div class="pl-card ${profit>=0?'em-t':'rose-t'}"><div class="pl-card-lbl">Net Profit</div><div class="pl-card-val ${profit>=0?'pos':'neg'}">${fmt(profit)}</div></div>`;
-  const typeMap={};filterJobs(analyticsFilter).forEach(j=>{const t=j.type||'Other';typeMap[t]=(typeMap[t]||0)+(j.fee||0);});
-  const sortedTypes=Object.entries(typeMap).sort((a,b)=>b[1]-a[1]).slice(0,5);
-  document.getElementById('top-survey-types').innerHTML=sortedTypes.length?sortedTypes.map(([name,amt])=>`<div class="hbar-item"><div class="hbar-top"><span>${name}</span><span>${fmt(amt)}</span></div><div class="hbar-track"><div class="hbar-fill" style="width:${Math.min(100,(amt/Math.max(...Object.values(typeMap)))*100)}%"></div></div></div>`).join(''):'<div class="empty-state">No jobs</div>';
-  const clientMap={};filterJobs(analyticsFilter).forEach(j=>{const c=j.client||'Unknown';clientMap[c]=(clientMap[c]||0)+(j.fee||0);});
-  const sortedClients=Object.entries(clientMap).sort((a,b)=>b[1]-a[1]).slice(0,5);
-  document.getElementById('top-clients').innerHTML=sortedClients.length?sortedClients.map(([name,amt])=>`<div class="hbar-item"><div class="hbar-top"><span>${name}</span><span>${fmt(amt)}</span></div><div class="hbar-track"><div class="hbar-fill" style="width:${Math.min(100,(amt/Math.max(...Object.values(clientMap)))*100)}%"></div></div></div>`).join(''):'<div class="empty-state">No jobs</div>';
-}
+        // ─────────────────────────────────────
+        // COUNTER ANIMATION (counts to 982K)
+        // ─────────────────────────────────────
+        (function() {
+            const counterEl = document.getElementById('counterInstalls');
+            if (counterEl) {
+                const target = 982;
+                const duration = 2000;
+                let animationFrame;
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const startTime = performance.now();
+                            function updateCounter(now) {
+                                const elapsed = now - startTime;
+                                const progress = Math.min(elapsed / duration, 1);
+                                const eased = 1 - Math.pow(1 - progress, 3);
+                                const current = Math.floor(eased * target);
+                                counterEl.textContent = current + 'K';
+                                if (progress < 1) {
+                                    animationFrame = requestAnimationFrame(updateCounter);
+                                } else {
+                                    counterEl.textContent = '982K';
+                                }
+                            }
+                            animationFrame = requestAnimationFrame(updateCounter);
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.5 });
+                observer.observe(counterEl);
+            }
+        })();
 
-function setTimeFilter(f){analyticsFilter=f;document.querySelectorAll('.tf-btn').forEach(btn=>btn.classList.remove('on'));document.getElementById(`tf-${f}`).classList.add('on');renderAnalytics();}
+        // ─────────────────────────────────────
+        // SKELETON LOADING SIMULATION
+        // ─────────────────────────────────────
+        (function() {
+            const skeletons = document.querySelectorAll('.skeleton');
+            if (skeletons.length) {
+                setTimeout(() => {
+                    skeletons.forEach(s => {
+                        s.style.opacity = '0';
+                        s.style.transition = 'opacity 0.5s ease';
+                    });
+                    setTimeout(() => skeletons.forEach(s => s.remove()), 500);
+                }, 1800);
+            }
+        })();
 
-async function recordJob(){
-  const client=document.getElementById('job-client').value.trim();
-  const location=document.getElementById('job-location').value.trim();
-  const type=document.getElementById('job-type').value;
-  const date=document.getElementById('job-date').value;
-  const fee=parseFloat(document.getElementById('job-fee').value);
-  if(!client||!location||!date||!fee)return alert('Fill all fields');
-  await addItem('jobs',{client,location,type,date,fee,payment_method:payM});
-  await refreshData();cm('job');
-}
+        // ─────────────────────────────────────
+        // MOBILE MENU TOGGLE
+        // ─────────────────────────────────────
+        (function() {
+            const menuBtn = document.getElementById('mobileMenuBtn');
+            const mobileMenu = document.getElementById('mobileMenu');
+            if (menuBtn && mobileMenu) {
+                menuBtn.addEventListener('click', () => {
+                    const expanded = menuBtn.getAttribute('aria-expanded') === 'true';
+                    menuBtn.setAttribute('aria-expanded', !expanded);
+                    mobileMenu.classList.toggle('hidden');
+                });
 
-async function addExpense(){const t=document.getElementById('et').value.trim();const a=parseFloat(document.getElementById('ea').value);if(!t||!a)return;await addItem('expenses',{title:t,amount:a,date:new Date().toISOString()});await refreshData();cm('expense');}
-async function addCustomer(){const n=document.getElementById('cn-name').value.trim();if(!n)return;await addItem('customers',{name:n,phone:document.getElementById('cn-phone').value.trim(),email:document.getElementById('cn-email').value.trim()});await refreshData();cm('addCustomer');}
-function filterCustomers(){custSearch=document.getElementById('cust-search-input').value.toLowerCase().trim();renderCustomers();}
+                // Close menu on link click
+                mobileMenu.querySelectorAll('a, button').forEach(item => {
+                    item.addEventListener('click', () => {
+                        mobileMenu.classList.add('hidden');
+                        menuBtn.setAttribute('aria-expanded', 'false');
+                    });
+                });
+            }
+        })();
 
-function switchTab(t){curTab=t;document.querySelectorAll('.pane').forEach(p=>p.classList.remove('on'));document.getElementById(`pane-${t}`).classList.add('on');document.querySelectorAll('.nitem').forEach(n=>n.classList.remove('on'));document.getElementById(`ni-${t}`).classList.add('on');document.getElementById('fab').style.display=['dashboard','analytics'].includes(t)?'none':'flex';if(t==='analytics')renderAnalytics();if(t==='sales')renderJobs();if(t==='customers')renderCustomers();}
-function fabClick(){if(curTab==='sales')openModal('job');else if(curTab==='expenses')openModal('expense');else if(curTab==='customers')openModal('addCustomer');}
-function openModal(t){
-  if(t==='job'){const dt=document.getElementById('job-date');if(dt){const now=new Date();now.setMinutes(now.getMinutes()-now.getTimezoneOffset());dt.value=now.toISOString().split('T')[0];}}
-  document.getElementById(`mo-${t}`).classList.add('on');
-}
-function cm(t){document.getElementById(`mo-${t}`).classList.remove('on');}
-function sp(m){payM=m;document.getElementById('pc').className='popt'+(m==='cash'?' sc':'');document.getElementById('pm').className='popt'+(m==='mpesa'?' sm':'');}
+        // ─────────────────────────────────────
+        // SMOOTH SCROLL FOR NAV LINKS
+        // ─────────────────────────────────────
+        (function() {
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                });
+            });
+        })();
 
-function openReport(){
-  const{total,exp,mpesa,cash}=calc();const rev=jobs.filter(j=>j.date===new Date().toISOString().split('T')[0]).reduce((s,j)=>s+(j.fee||0),0);
-  const shop=currentUser?.shopName||'Survey Duka';
-  const msg=`${shop} Daily Report ${new Date().toLocaleDateString()}\nTotal Revenue: ${fmt(rev)}\nM-Pesa: ${fmt(mpesa)}\nCash: ${fmt(cash)}\nExpenses: ${fmt(exp)}\nNet: ${fmt(rev-exp)}\n\n— Survey Duka`;
-  document.getElementById('rta').value=msg;document.getElementById('wa-link').href=`https://wa.me/?text=${encodeURIComponent(msg)}`;openModal('report');
-}
-function copyRpt(){navigator.clipboard.writeText(document.getElementById('rta').value).then(()=>alert('Copied!'));}
-
-function exportExpensesCSV(){const rows=[['Date','Title','Amount']];expenses.forEach(e=>rows.push([new Date(e.date).toLocaleDateString(),e.title,e.amount]));downloadCSV(rows,'expenses.csv');}
-function downloadCSV(rows,file){const csv=rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');const blob=new Blob([csv],{type:'text/csv'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=file;a.click();URL.revokeObjectURL(a.href);}
-
-function renderAll(){renderDashboard();renderJobs();renderAnalytics();renderCustomers();renderExpenses();}
-
-// Boot
-(async function init(){
-  const session=getSession();
-  if(session){await openUserDB(session.userId);await loadData();showApp();}
-  else{document.getElementById('auth-overlay').style.display='flex';authSetTab('login');}
-  document.querySelectorAll('.moverlay').forEach(el=>el.addEventListener('click',e=>{if(e.target===el)el.classList.remove('on');}));
-})();
-</script>
+        console.log('%c✨ Luminar Studio %cAI Creative Ecosystem',
+            'font-size:1.5em;font-weight:bold;color:#a78bfa;',
+            'color:#8a94a6;');
+        console.log('%cAll systems ready. Explore the future of creation.',
+            'color:#6b7280;font-style:italic;');
+    </script>
 </body>
 </html>
